@@ -1,0 +1,44 @@
+// complex genBop when both are atom
+
+	if( !isatom(a) ){
+		gnBop(d,a);
+		if( !isatom(b) ){
+			d2 = newR();
+			gnBop(d2,b);
+			printf("%s r%d r%d r%d\n",getS2(op),d,d,d2);
+			freeR(d2);
+		}else{
+			a2 = gnAtom(b);
+			prefix = isnum(b) ? '#' : 'r';
+			printf("%s r%d r%d %c%d\n",getS2(op),d,d,prefix,a2);
+		}
+	}else{
+	
+	if( isnum(a)){
+		// order of test is important
+		if( isnum(b) ){
+			a1 = cdr(a);
+			a2 = cdr(b);
+			d2 = newR();
+			printf("mov r%d #%d\n",d2,a1 );
+			printf("%s r%d r%d #%d\n",getS2(op),d,d2,a2);
+			freeR(d2);
+		}else if( iscommute(op) ){
+			a1 = gnAtom(b);
+			a2 = gnAtom(a);
+			printf("%s r%d r%d #%d\n",getS2(op),d,a1,a2);
+		}else{
+			a1 = gnAtom(a);
+			d2 = newR();
+			printf("mov r%d #%d\n",d2,a1);
+			a2 = gnAtom(b);
+			printf("%s r%d r%d r%d\n",getS2(op),d,d2,a2);
+			freeR(d2);
+		}
+	}else{
+		a1 = gnAtom(a);
+		a2 = gnAtom(b);
+		prefix = isnum(b) ? '#' : 'r';	
+		printf("%s r%d r%d %c%d\n",getS2(op),d,a1,prefix,a2 );			
+	}
+}

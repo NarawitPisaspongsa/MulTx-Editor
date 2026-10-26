@@ -1,0 +1,26 @@
+
+.symbol
+  cnt 100
+
+.code 0
+:main
+  mov r1 #isr
+  st r1 1000   ; set up int vector
+  mov r1 #0
+  st r1 cnt    ; cnt = 0
+:loop
+;  this is almost empty loop
+  swi          ; wait for int
+  ld r1 cnt
+  eq r2 r1 #10
+  jf r2 loop
+  trap r0 #0   ; stop
+
+:isr
+;  must not use r1
+  ld r3 cnt
+  add r3 r3 #1
+  st r3 cnt
+  reti
+
+.end 

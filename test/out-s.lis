@@ -1,0 +1,35 @@
+                        .symbol
+                         fp 30
+                         sp 29
+                         retval 28
+                         rads 27
+                        .code 0
+   0 L 5 30 3500         mov fp #3500
+   1 L 5 29 3000         mov sp #3000
+   2 L 7 27 4            jal rads main
+   3 X 31 0 0 0 20       trap r0 #0
+                        ; fun main pv 0
+                        :main
+                        ; gnAsg :(#1 0 )
+   4 D 4 1 30 1         st r1 @1 fp
+   5 D 4 2 30 2         st r2 @2 fp
+   6 D 10 30 30 3       add fp fp #3
+   7 D 4 27 30 0        st rads @0 fp
+   8 L 5 2 0            mov r2 #0
+   9 X 31 2 15 0 20     trap r2 #15
+  10 L 5 1 0            mov r1 #0
+  11 L 6 0 14           jmp L102
+                        :L103
+  12 X 31 1 1 0 20      trap r1 #1
+  13 D 10 1 1 1         add r1 r1 #1
+                        :L102
+  14 D 19 2 1 10        lt r2 r1 #10
+  15 L 8 2 12           jt r2 L103
+                        :L101
+  16 D 2 27 30 0        ld rads @0 fp
+  17 D 11 30 30 3       sub fp fp #3
+  18 D 2 2 30 2         ld r2 @2 fp
+  19 D 2 1 30 1         ld r1 @1 fp
+  20 X 31 27 0 0 19     ret rads
+                        .data 200
+                        .end

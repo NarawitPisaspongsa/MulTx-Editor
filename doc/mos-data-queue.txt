@@ -1,0 +1,34 @@
+
+mos rz  data structure 
+
+process control block (PCB)
+
+PCB contains the state of a process.  It has the following fields:
+
+0  Program counter
+1  stack pointer
+2  frame pointer
+3  return address reg 
+4  return value reg
+5  state: active/not-active
+
+process queue and semaphore
+
+we use singly linked list with header for both. The header has two fields: head, end.  This will make appending a new cell at the end of list easy.  
+
+for semaphore wait list, the operations are
+
+append-list(L,a)    append a cell at the end of list
+delete-head(L)      delete a cell from the head
+
+for process queue, we need a pointer to identify the current process. Also, we made the list a circular list in order to find the next process.  The members of this list are never deleted because deleting an arbritary element required searching for the previous link.  In order to make a process being "out" of the list, we use a flag in the PCB instead denoting its state: active/not-active.  When we mark the state as not-active, it will be skip when considering the next process. The operations on this list are:
+
+nextp()             find next process on the process list (from the current process)
+enqueue(p)          put a new member p, at the end of process list
+dequeue()           dequeue the current process by marking its PCB state not-active
+
+To know when to terminate the program, we keep "nump" the number of process in the process list.  enqueue() increases this number.  dequeue() decreases this number.  when nump is zero the simulation will terminate.
+
+18 Feb 2017
+
+ 

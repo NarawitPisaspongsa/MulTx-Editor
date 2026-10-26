@@ -1,0 +1,34 @@
+$ gcc -Wall -Wextra -std=c99 as21.c hash.c -o as21
+as21.c: In function ‘readcode’:
+as21.c:210:16: warning: unused variable ‘type’ [-Wunused-variable]
+  210 |         int v, type;
+      |                ^~~~
+as21.c:210:13: warning: unused variable ‘v’ [-Wunused-variable]
+  210 |         int v, type;
+      |             ^
+as21.c: In function ‘pass1’:
+as21.c:294:42: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+  294 |                         if(getValue(idx) != UNDEF)
+      |                                          ^~
+as21.c:308:50: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+  308 |                                 if(getValue(idx) != UNDEF)
+      |                                                  ^~
+as21.c: In function ‘rdtokval’:
+as21.c:376:14: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+  376 |         if(v == UNDEF) error("undefined symbol");
+      |              ^~
+as21.c: In function ‘gencode’:
+as21.c:408:17: warning: unused variable ‘op2’ [-Wunused-variable]
+  408 |         int op, op2, mode, a1, a2, a3;
+      |                 ^~~
+as21.c: At top level:
+as21.c:556:6: warning: return type of ‘main’ is not ‘int’ [-Wmain]
+  556 | void main(int argc, char *argv[]){
+      |      ^~~~
+as21.c: In function ‘outlst’:
+as21.c:492:27: warning: ‘%s’ directive writing up to 199 bytes into a region of size between 188 and 195 [-Wformat-overflow=]
+  492 |         sprintf(cbuf,"%4d %s",loc,ob);
+      |                           ^~      ~~
+as21.c:492:9: note: ‘sprintf’ output between 6 and 212 bytes into a destination of size 200
+  492 |         sprintf(cbuf,"%4d %s",loc,ob);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~

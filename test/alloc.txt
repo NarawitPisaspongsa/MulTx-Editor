@@ -1,0 +1,18 @@
+// malloc
+
+#noframe
+int0()
+  i = i + 1
+
+#noframe
+new(n)
+  ei()
+//  i = readport(10)
+  asm("trap r1 #14")
+
+main()
+  ax = new(10)
+  i = 0
+  while( i < 9 )
+    ax[i] = i
+    i = i + 1

@@ -1,0 +1,136 @@
+
+// mos in Rz
+//    demo  two simple processes
+//    update   11 Feb 2018
+
+Q[20], qend, qindex   // process queue
+nump		      // number of active process
+currentp	      // current process
+
+newp()
+  return malloc(16)
+
+newStack()
+  return malloc(64)
+
+newFrame()
+  return malloc(64)
+
+enqueue(p)	      // put p in process queue
+  Q[qend] = p
+  Q[qend+1] = 0
+  qend = qend + 1
+  nump = nump + 1
+
+createp(ads)
+  p = newp()             // new PCB
+  p[0] = ads             // p.PC
+  p[1] = newStack()+16   // p.SP, offset for initial popm
+  p[2] = newFrame()      // p.FP
+  enqueue(p)
+  return p
+
+terminate()
+  di(0)
+  Q[qindex] = 1	      // mark as dead
+  nump = nump - 1
+  ei(0)
+  asm("int #0")	      // task switch
+
+nextp()
+  if( nump == 0 ) 
+    return 0
+  qindex = qindex + 1
+  while( Q[qindex] < 2 )	// is 1 or 0
+    if( Q[qindex] == 0 )
+      qindex = 0
+    if( Q[qindex] == 1 )
+      qindex = qindex + 1
+  return Q[qindex]
+
+// task switch,  must not use local regs and frame
+//    use r20, r21
+#noframe
+int0()
+  asm("mov r20 #0")
+  asm("trap r20 #15")		// di(0)	
+  asm("ld r21 currentp")
+  asm("xch r20")		// get RetAds
+  asm("st r20 @0 r21")		// p.PC = RetAds
+  asm("pushm sp")		// save currentp context
+  asm("st sp @1 r21")		// p.SP = sp
+  asm("st fp @2 r21")		// p.FP = fp
+  asm("st rads @3 r21")		// save link register
+  asm("st retval @4 r21")	// save retv register
+
+  p = nextp()
+  if( p == 0 )			// no process in the queue
+    asm("trap r0 #0")		// stop simulation
+  currentp = p			// update currentp
+
+  asm("ld r21 currentp")
+  asm("ld sp @1 r21")   	// get p.SP
+  asm("popm sp")		// restore context
+  asm("ld fp @2 r21")		// restore p.FP
+  asm("ld rads @3 r21")		// restore link register
+  asm("ld retval @4 r21")	// restore retv register
+  asm("ld r20 @0 r21")		// get p.PC
+  asm("xch r20")		// RetAds = p.PC
+  asm("mov r21 #0")
+  asm("trap r21 #16")		// ei(0)
+
+boot()
+  currentp = newp()		// zeroth process not in Q
+  ei(0)				
+  asm("int #0")			// run task in Q
+
+// function prototype
+process1()
+process2()
+
+main()
+  di(0)
+  settimer0(120)
+  qindex = 0
+  qend = 0
+  nump = 0
+  p = createp(&process1)
+  p = createp(&process2)
+  boot()
+ 
+// ------------- applications ----------
+
+cnt1, cnt2
+
+#noframe
+delay()
+  asm("nop")
+  asm("nop")
+  asm("nop")
+  asm("nop")
+  asm("nop")
+  asm("nop")
+  asm("nop")
+  asm("nop")
+  asm("nop")
+
+process1()
+  cnt1 = 0
+  while( cnt1 < 10 )
+    cnt1 = cnt1 + 1
+    print(cnt1)
+    delay()
+  terminate()
+
+process2()
+  cnt2 = 100
+  while( cnt2 < 110 )
+    cnt2 = cnt2 + 1
+    print(cnt2)
+    delay()
+  terminate()
+
+
+// ------------------------------------------
+
+   

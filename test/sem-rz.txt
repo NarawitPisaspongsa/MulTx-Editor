@@ -1,0 +1,14 @@
+// sema
+
+sem1
+cnt
+
+main()
+  cnt = 10
+  i = 0
+  while( i < 20 )
+    wait(sem1)
+    cnt = cnt + 1
+    signal(sem1)
+    i = i + 1
+

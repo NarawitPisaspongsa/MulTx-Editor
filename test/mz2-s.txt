@@ -1,0 +1,735 @@
+.symbol
+ fp 30
+ sp 29
+ retval 28
+ rads 27
+ Q 1100
+ qq 1101
+ nump 1102
+ currentp 1103
+ freelist 1104
+ full 1105
+ empty 1106
+ mutex 1107
+ shareVar 1108
+.code 0
+ mov fp #3500
+ mov sp #3000
+ jal rads main
+ trap r0 #0
+; fun newp pv 0
+:newp
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+mov r1 #16
+trap r1 #19
+mov retval r28
+jmp L101
+:L101
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun newStack pv 0
+:newStack
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+mov r1 #64
+trap r1 #19
+mov retval r28
+jmp L102
+:L102
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun newFrame pv 0
+:newFrame
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+mov r1 #64
+trap r1 #19
+mov retval r28
+jmp L103
+:L103
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun new pv 1
+:new
+; gnAsg :(#2 (call malloc 2 ))
+; gnAsg :(#2 freelist )
+; gnAsg :(freelist (vec #2 1 ))
+; gnAsg :((vec #2 0 )#1 )
+; gnAsg :((vec #2 1 )0 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r1
+ld r3 freelist
+eq r4 r3 #0
+jf r4 L105
+mov r3 #2
+trap r3 #19
+mov r2 r28
+jmp L106
+:L105
+ld r2 freelist
+mov r4 #1
+ld r3 +r2 r4
+st r3 freelist
+:L106
+mov r3 #0
+st r1 +r2 r3
+mov r3 #0
+mov r4 #1
+st r3 +r2 r4
+mov retval r2
+jmp L104
+:L104
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun appendL pv 2
+:appendL
+; gnAsg :((vec #1 0 )#2 )
+; gnAsg :(#3 (vec #1 1 ))
+; gnAsg :((vec #3 1 )#2 )
+; gnAsg :((vec #1 1 )#2 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+add fp fp #6
+st rads @0 fp
+pop sp r2
+pop sp r1
+mov r5 #0
+ld r4 +r1 r5
+eq r5 r4 #0
+jf r5 L108
+mov r4 #0
+st r2 +r1 r4
+jmp L109
+:L108
+mov r5 #1
+ld r4 +r1 r5
+mov r3 r4
+mov r4 #1
+st r2 +r3 r4
+:L109
+mov r4 #1
+st r2 +r1 r4
+:L107
+ld rads @0 fp
+sub fp fp #6
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun enqueue pv 1
+:enqueue
+; gnAsg :(nump (+ nump 1 ))
+; gnAsg :(#2 (call new #1 ))
+; gnAsg :((vec #2 1 )(vec Q 0 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+add fp fp #6
+st rads @0 fp
+pop sp r1
+ld r3 nump
+add r4 r3 #1
+st r4 nump
+push sp r1
+jal rads new
+mov r2 r28
+ld r3 Q
+push sp r3
+push sp r2
+jal rads appendL
+mov r4 #0
+ld r5 Q
+ld r3 +r5 r4
+mov r4 #1
+st r3 +r2 r4
+:L110
+ld rads @0 fp
+sub fp fp #6
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun dequeue pv 0
+:dequeue
+; gnAsg :(nump (- nump 1 ))
+; gnAsg :(#1 currentp )
+; gnAsg :((vec #1 5 )0 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+ld r2 nump
+sub r3 r2 #1
+st r3 nump
+ld r1 currentp
+mov r2 #0
+mov r3 #5
+st r2 +r1 r3
+:L111
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun createp pv 1
+:createp
+; gnAsg :(#2 (call newp ))
+; gnAsg :((vec #2 0 )#1 )
+; gnAsg :((vec #2 1 )(+ (call newStack )16 ))
+; gnAsg :((vec #2 2 )(call newFrame ))
+; gnAsg :((vec #2 3 )0 )
+; gnAsg :((vec #2 4 )0 )
+; gnAsg :((vec #2 5 )1 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r1
+jal rads newp
+mov r2 r28
+mov r3 #0
+st r1 +r2 r3
+jal rads newStack
+add r3 r28 #16
+mov r4 #1
+st r3 +r2 r4
+jal rads newFrame
+mov r3 #2
+st r28 +r2 r3
+mov r3 #0
+mov r4 #3
+st r3 +r2 r4
+mov r3 #0
+mov r4 #4
+st r3 +r2 r4
+mov r3 #1
+mov r4 #5
+st r3 +r2 r4
+push sp r2
+jal rads enqueue
+mov retval r2
+jmp L112
+:L112
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun nextQ pv 0
+:nextQ
+; gnAsg :(qq (vec qq 1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r2 #1
+ld r3 qq
+ld r1 +r3 r2
+st r1 qq
+mov r2 #0
+ld r3 qq
+ld r1 +r3 r2
+mov retval r1
+jmp L113
+:L113
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun nextp pv 0
+:nextp
+; gnAsg :(#1 (call nextQ ))
+; gnAsg :(#1 (call nextQ ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+jal rads nextQ
+mov r1 r28
+jmp L115
+:L116
+jal rads nextQ
+mov r1 r28
+:L115
+mov r3 #5
+ld r2 +r1 r3
+eq r3 r2 #0
+jt r3 L116
+mov retval r1
+jmp L114
+:L114
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun terminate pv 0
+:terminate
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+mov r1 #0
+trap r1 #15
+jal rads dequeue
+mov r1 #0
+trap r1 #16
+int #0
+:L117
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun int0 pv 0
+:int0
+; gnAsg :(currentp (call nextp ))
+ld r21 currentp
+xch r20
+st r20 @0 r21
+pushm sp
+st sp @1 r21
+st fp @2 r21
+st rads @3 r21
+st retval @4 r21
+ld r1 nump
+eq r2 r1 #0
+jf r2 L119
+trap r0 #0
+:L119
+jal rads nextp
+st r28 currentp
+ld r21 currentp
+ld sp @1 r21
+popm sp
+ld fp @2 r21
+ld rads @3 r21
+ld retval @4 r21
+ld r20 @0 r21
+xch r20
+:L118
+reti
+; fun boot pv 0
+:boot
+; gnAsg :(currentp (call newp ))
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+jal rads newp
+st r28 currentp
+mov r1 #0
+trap r1 #16
+int #0
+:L120
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun free pv 1
+:free
+; gnAsg :((vec #1 1 )freelist )
+; gnAsg :(freelist #1 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+pop sp r1
+ld r2 freelist
+mov r3 #1
+st r2 +r1 r3
+st r1 freelist
+:L121
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun deleteL pv 1
+:deleteL
+; gnAsg :(#2 (vec #1 0 ))
+; gnAsg :(#3 (vec #1 1 ))
+; gnAsg :((vec #1 0 )0 )
+; gnAsg :((vec #1 1 )0 )
+; gnAsg :((vec #1 0 )(vec #2 1 ))
+; gnAsg :(#4 (vec #2 0 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+add fp fp #7
+st rads @0 fp
+pop sp r1
+mov r6 #0
+ld r5 +r1 r6
+mov r2 r5
+mov r6 #1
+ld r5 +r1 r6
+mov r3 r5
+eq r5 r2 r3
+jf r5 L123
+mov r5 #0
+mov r6 #0
+st r5 +r1 r6
+mov r5 #0
+mov r6 #1
+st r5 +r1 r6
+jmp L124
+:L123
+mov r6 #1
+ld r5 +r2 r6
+mov r6 #0
+st r5 +r1 r6
+:L124
+mov r6 #0
+ld r5 +r2 r6
+mov r4 r5
+push sp r2
+jal rads free
+mov retval r4
+jmp L122
+:L122
+ld rads @0 fp
+sub fp fp #7
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun blockp pv 0
+:blockp
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+jal rads dequeue
+mov r1 #0
+trap r1 #16
+int #0
+:L125
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun wakeup pv 1
+:wakeup
+; gnAsg :(nump (+ nump 1 ))
+; gnAsg :((vec #1 5 )1 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+pop sp r1
+ld r2 nump
+add r3 r2 #1
+st r3 nump
+mov r2 #1
+mov r3 #5
+st r2 +r1 r3
+:L126
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun newsem pv 1
+:newsem
+; gnAsg :(#2 (call malloc 2 ))
+; gnAsg :((vec #2 0 )#1 )
+; gnAsg :((vec #2 1 )(call new 0 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+pop sp r1
+mov r3 #2
+trap r3 #19
+mov r2 r28
+mov r3 #0
+st r1 +r2 r3
+mov r3 #0
+push sp r3
+jal rads new
+mov r3 #1
+st r28 +r2 r3
+mov retval r2
+jmp L127
+:L127
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun wait pv 1
+:wait
+; gnAsg :((vec #1 0 )(- (vec #1 0 )1 ))
+; gnAsg :(#2 (call new currentp ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r1
+mov r3 #0
+trap r3 #15
+mov r4 #0
+ld r3 +r1 r4
+sub r4 r3 #1
+mov r3 #0
+st r4 +r1 r3
+mov r4 #0
+ld r3 +r1 r4
+lt r4 r3 #0
+jf r4 L129
+ld r3 currentp
+push sp r3
+jal rads new
+mov r2 r28
+mov r4 #1
+ld r3 +r1 r4
+push sp r3
+push sp r2
+jal rads appendL
+jal rads blockp
+:L129
+mov r3 #0
+trap r3 #16
+:L128
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun signal pv 1
+:signal
+; gnAsg :((vec #1 0 )(+ (vec #1 0 )1 ))
+; gnAsg :(#2 (call deleteL (vec #1 1 )))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r1
+mov r3 #0
+trap r3 #15
+mov r4 #0
+ld r3 +r1 r4
+add r4 r3 #1
+mov r3 #0
+st r4 +r1 r3
+mov r4 #0
+ld r3 +r1 r4
+le r4 r3 #0
+jf r4 L131
+mov r4 #1
+ld r3 +r1 r4
+push sp r3
+jal rads deleteL
+mov r2 r28
+push sp r2
+jal rads wakeup
+:L131
+mov r3 #0
+trap r3 #16
+:L130
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun reader pv 0
+:reader
+; gnAsg :(#1 0 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #0
+jmp L133
+:L134
+ld r2 full
+push sp r2
+jal rads wait
+ld r2 mutex
+push sp r2
+jal rads wait
+mov r2 #43
+trap r2 #2
+ld r2 shareVar
+trap r2 #1
+ld r2 mutex
+push sp r2
+jal rads signal
+add r1 r1 #1
+ld r2 empty
+push sp r2
+jal rads signal
+:L133
+lt r2 r1 #5
+jt r2 L134
+jal rads terminate
+:L132
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun writer pv 0
+:writer
+; gnAsg :(#1 0 )
+; gnAsg :(shareVar (+ shareVar 1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r1 #0
+jmp L136
+:L137
+ld r2 empty
+push sp r2
+jal rads wait
+ld r2 mutex
+push sp r2
+jal rads wait
+ld r2 shareVar
+add r3 r2 #1
+st r3 shareVar
+ld r2 mutex
+push sp r2
+jal rads signal
+add r1 r1 #1
+ld r2 full
+push sp r2
+jal rads signal
+:L136
+lt r2 r1 #5
+jt r2 L137
+jal rads terminate
+:L135
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun main pv 0
+:main
+; gnAsg :(nump 0 )
+; gnAsg :(freelist 0 )
+; gnAsg :(Q (call malloc 2 ))
+; gnAsg :(#1 (call createp (& reader )))
+; gnAsg :(#1 (call createp (& writer )))
+; gnAsg :(qq (vec Q 0 ))
+; gnAsg :(full (call newsem 0 ))
+; gnAsg :(empty (call newsem 1 ))
+; gnAsg :(mutex (call newsem 1 ))
+; gnAsg :(shareVar 0 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+mov r1 #int0
+st r1 1000
+mov r2 #0
+trap r2 #15
+mov r2 #0
+st r2 nump
+mov r2 #0
+st r2 freelist
+mov r2 #2
+trap r2 #19
+st r28 Q
+mov r2 #reader
+push sp r2
+jal rads createp
+mov r1 r28
+mov r2 #writer
+push sp r2
+jal rads createp
+mov r1 r28
+mov r3 #0
+ld r4 Q
+ld r2 +r4 r3
+st r2 qq
+mov r2 #0
+push sp r2
+jal rads newsem
+st r28 full
+mov r2 #1
+push sp r2
+jal rads newsem
+st r28 empty
+mov r2 #1
+push sp r2
+jal rads newsem
+st r28 mutex
+mov r2 #0
+st r2 shareVar
+mov r2 #400
+trap r2 #13
+jal rads boot
+:L138
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+.data 200
+.end

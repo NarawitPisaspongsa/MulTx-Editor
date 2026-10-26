@@ -1,0 +1,100 @@
+;;  mos
+
+.symbol
+	stop		0
+	newp		10
+	newStack 	11
+	enqueue		12
+	terminate 	13
+	nextp		14
+	di		15
+	ei		16
+	print1		17
+	print2		18
+	cnt		1600
+	cnt2		1601
+	nump		1500
+	currentp	1501
+	sp		29     ;; r29 persistent
+
+.code	0
+	trap di
+	;;  ... initialise
+	mv r1 #tswitch
+	st r1 1000
+	st r0 cnt
+	st r0 cnt2
+	st r0 nump
+	st r0 currentp
+ 
+	;; create process1
+	trap newp
+	mv r1 #process1
+	st r1 @0 r27 	;; p.PC = &process1
+	mv r1 r27	;; keep &process1
+	trap newStack
+	st r27 @1 r1    ;; p.SP = newStack
+	trap enqueue
+
+	st r1 currentp	;; first process
+
+	;; create process2
+	trap newp
+	mv r1 #process2
+	st r1 @0 r27	;; p.PC = &process2
+	mv r1 r27
+	trap newStack
+	add r27 r27 #16 ;; for first resr 
+	st r27 @1 r1 	;; p.SP = newStack
+	trap enqueue
+
+	;; boot
+	trap ei
+	jmp process1
+	trap stop
+	
+:process1		;; count 1..5
+:loop1	ld r5 cnt
+	add r5 r5 #1
+	st r5 cnt
+	mv r1 r5
+	trap print1
+	eq r6 r5 #5
+	jf r6 loop1
+        trap terminate
+	int 0		;; force task switch
+	trap stop
+
+:process2		;; count 1..10
+:loop2	ld r5 cnt2
+	add r5 r5 #1
+	st r5 cnt2
+	mv r1 r5
+	trap print2
+	eq r6 r5 #10
+	jf r6 loop2
+	trap terminate
+	int 0		;; force task switch
+	trap stop
+
+:tswitch		;; use r20,27
+	trap di
+ 	ld r27 currentp
+	savt r20	;; get RetAds
+	st r20 @0 r27	;; p.PC = RetAds
+	savr sp		;; save current context
+	st sp @1 r27	;; p.SP = sp
+	trap nextp
+	jf r27 exit	;; no process in the queue
+
+	st r27 currentp	;; update currentp
+	ld sp @1 r27	;; get p.SP
+	resr sp		;; restore context
+	ld r20 @0 r27	;; get p.PC
+	rest r20	;; RetAds = p.PC
+	trap ei	
+	reti
+:exit	trap stop
+
+.end
+

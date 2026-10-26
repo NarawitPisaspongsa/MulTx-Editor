@@ -1,0 +1,18 @@
+
+as21 and sim21 update
+
+as21  
+
+1) move swi from trap #17  to an instruction xop 29
+2) change instruction name "swap" to "xch" (swap easily caused conflict).  A better solution is to change all global names in symbol table in Rz to be prefixed with "_".
+3) improve symbol table organisation by seperating hash table from symbol table.  Making hash table long (2003) but symbol table wide and short (1000).  This saves memory.  Also the organisation of symbol becomes continuous, hence make it easy to scan for symbols.
+4) output symbols to object file.  This is to be used by sim21 to associate location of global variables and function names with their addresses. (for tracing purpose)
+
+sim21
+
+1) move swi from trap #17 to xop 29
+2) implement semaphore in trap 20..22. (mos.c): newsem(), wait(), signal().
+3) implement process queue compaction as trap #23.
+
+15 Feb 2017
+

@@ -1,0 +1,735 @@
+                        .symbol
+                         fp 30
+                         sp 29
+                         retval 28
+                         rads 27
+                         Q 1100
+                         qq 1101
+                         nump 1102
+                         currentp 1103
+                         freelist 1104
+                         full 1105
+                         empty 1106
+                         mutex 1107
+                         shareVar 1108
+                        .code 0
+   0 L 5 30 3500         mov fp #3500
+   1 L 5 29 3000         mov sp #3000
+   2 L 7 27 524          jal rads main
+   3 X 31 0 0 0 20       trap r0 #0
+                        ; fun newp pv 0
+                        :newp
+   4 D 4 1 30 1         st r1 @1 fp
+   5 D 10 30 30 2       add fp fp #2
+   6 D 4 27 30 0        st rads @0 fp
+   7 L 5 1 16           mov r1 #16
+   8 X 31 1 19 0 20     trap r1 #19
+   9 X 31 28 28 0 16    mov retval r28
+  10 L 6 0 11           jmp L101
+                        :L101
+  11 D 2 27 30 0        ld rads @0 fp
+  12 D 11 30 30 2       sub fp fp #2
+  13 D 2 1 30 1         ld r1 @1 fp
+  14 X 31 27 0 0 19     ret rads
+                        ; fun newStack pv 0
+                        :newStack
+  15 D 4 1 30 1         st r1 @1 fp
+  16 D 10 30 30 2       add fp fp #2
+  17 D 4 27 30 0        st rads @0 fp
+  18 L 5 1 64           mov r1 #64
+  19 X 31 1 19 0 20     trap r1 #19
+  20 X 31 28 28 0 16    mov retval r28
+  21 L 6 0 22           jmp L102
+                        :L102
+  22 D 2 27 30 0        ld rads @0 fp
+  23 D 11 30 30 2       sub fp fp #2
+  24 D 2 1 30 1         ld r1 @1 fp
+  25 X 31 27 0 0 19     ret rads
+                        ; fun newFrame pv 0
+                        :newFrame
+  26 D 4 1 30 1         st r1 @1 fp
+  27 D 10 30 30 2       add fp fp #2
+  28 D 4 27 30 0        st rads @0 fp
+  29 L 5 1 64           mov r1 #64
+  30 X 31 1 19 0 20     trap r1 #19
+  31 X 31 28 28 0 16    mov retval r28
+  32 L 6 0 33           jmp L103
+                        :L103
+  33 D 2 27 30 0        ld rads @0 fp
+  34 D 11 30 30 2       sub fp fp #2
+  35 D 2 1 30 1         ld r1 @1 fp
+  36 X 31 27 0 0 19     ret rads
+                        ; fun new pv 1
+                        :new
+                        ; gnAsg :(#2 (call malloc 2 ))
+                        ; gnAsg :(#2 freelist )
+                        ; gnAsg :(freelist (vec #2 1 ))
+                        ; gnAsg :((vec #2 0 )#1 )
+                        ; gnAsg :((vec #2 1 )0 )
+  37 D 4 1 30 1         st r1 @1 fp
+  38 D 4 2 30 2         st r2 @2 fp
+  39 D 4 3 30 3         st r3 @3 fp
+  40 D 4 4 30 4         st r4 @4 fp
+  41 D 10 30 30 5       add fp fp #5
+  42 D 4 27 30 0        st rads @0 fp
+  43 X 31 29 1 0 22     pop sp r1
+  44 L 1 3 1104         ld r3 freelist
+  45 D 17 4 3 0         eq r4 r3 #0
+  46 L 9 4 51           jf r4 L105
+  47 L 5 3 2            mov r3 #2
+  48 X 31 3 19 0 20     trap r3 #19
+  49 X 31 2 28 0 16     mov r2 r28
+  50 L 6 0 55           jmp L106
+                        :L105
+  51 L 1 2 1104         ld r2 freelist
+  52 L 5 4 1            mov r4 #1
+  53 X 31 3 2 4 17      ld r3 +r2 r4
+  54 L 3 3 1104         st r3 freelist
+                        :L106
+  55 L 5 3 0            mov r3 #0
+  56 X 31 1 2 3 18      st r1 +r2 r3
+  57 L 5 3 0            mov r3 #0
+  58 L 5 4 1            mov r4 #1
+  59 X 31 3 2 4 18      st r3 +r2 r4
+  60 X 31 28 2 0 16     mov retval r2
+  61 L 6 0 62           jmp L104
+                        :L104
+  62 D 2 27 30 0        ld rads @0 fp
+  63 D 11 30 30 5       sub fp fp #5
+  64 D 2 4 30 4         ld r4 @4 fp
+  65 D 2 3 30 3         ld r3 @3 fp
+  66 D 2 2 30 2         ld r2 @2 fp
+  67 D 2 1 30 1         ld r1 @1 fp
+  68 X 31 27 0 0 19     ret rads
+                        ; fun appendL pv 2
+                        :appendL
+                        ; gnAsg :((vec #1 0 )#2 )
+                        ; gnAsg :(#3 (vec #1 1 ))
+                        ; gnAsg :((vec #3 1 )#2 )
+                        ; gnAsg :((vec #1 1 )#2 )
+  69 D 4 1 30 1         st r1 @1 fp
+  70 D 4 2 30 2         st r2 @2 fp
+  71 D 4 3 30 3         st r3 @3 fp
+  72 D 4 4 30 4         st r4 @4 fp
+  73 D 4 5 30 5         st r5 @5 fp
+  74 D 10 30 30 6       add fp fp #6
+  75 D 4 27 30 0        st rads @0 fp
+  76 X 31 29 2 0 22     pop sp r2
+  77 X 31 29 1 0 22     pop sp r1
+  78 L 5 5 0            mov r5 #0
+  79 X 31 4 1 5 17      ld r4 +r1 r5
+  80 D 17 5 4 0         eq r5 r4 #0
+  81 L 9 5 85           jf r5 L108
+  82 L 5 4 0            mov r4 #0
+  83 X 31 2 1 4 18      st r2 +r1 r4
+  84 L 6 0 90           jmp L109
+                        :L108
+  85 L 5 5 1            mov r5 #1
+  86 X 31 4 1 5 17      ld r4 +r1 r5
+  87 X 31 3 4 0 16      mov r3 r4
+  88 L 5 4 1            mov r4 #1
+  89 X 31 2 3 4 18      st r2 +r3 r4
+                        :L109
+  90 L 5 4 1            mov r4 #1
+  91 X 31 2 1 4 18      st r2 +r1 r4
+                        :L107
+  92 D 2 27 30 0        ld rads @0 fp
+  93 D 11 30 30 6       sub fp fp #6
+  94 D 2 5 30 5         ld r5 @5 fp
+  95 D 2 4 30 4         ld r4 @4 fp
+  96 D 2 3 30 3         ld r3 @3 fp
+  97 D 2 2 30 2         ld r2 @2 fp
+  98 D 2 1 30 1         ld r1 @1 fp
+  99 X 31 27 0 0 19     ret rads
+                        ; fun enqueue pv 1
+                        :enqueue
+                        ; gnAsg :(nump (+ nump 1 ))
+                        ; gnAsg :(#2 (call new #1 ))
+                        ; gnAsg :((vec #2 1 )(vec Q 0 ))
+ 100 D 4 1 30 1         st r1 @1 fp
+ 101 D 4 2 30 2         st r2 @2 fp
+ 102 D 4 3 30 3         st r3 @3 fp
+ 103 D 4 4 30 4         st r4 @4 fp
+ 104 D 4 5 30 5         st r5 @5 fp
+ 105 D 10 30 30 6       add fp fp #6
+ 106 D 4 27 30 0        st rads @0 fp
+ 107 X 31 29 1 0 22     pop sp r1
+ 108 L 1 3 1102         ld r3 nump
+ 109 D 10 4 3 1         add r4 r3 #1
+ 110 L 3 4 1102         st r4 nump
+ 111 X 31 29 1 0 21     push sp r1
+ 112 L 7 27 37          jal rads new
+ 113 X 31 2 28 0 16     mov r2 r28
+ 114 L 1 3 1100         ld r3 Q
+ 115 X 31 29 3 0 21     push sp r3
+ 116 X 31 29 2 0 21     push sp r2
+ 117 L 7 27 69          jal rads appendL
+ 118 L 5 4 0            mov r4 #0
+ 119 L 1 5 1100         ld r5 Q
+ 120 X 31 3 5 4 17      ld r3 +r5 r4
+ 121 L 5 4 1            mov r4 #1
+ 122 X 31 3 2 4 18      st r3 +r2 r4
+                        :L110
+ 123 D 2 27 30 0        ld rads @0 fp
+ 124 D 11 30 30 6       sub fp fp #6
+ 125 D 2 5 30 5         ld r5 @5 fp
+ 126 D 2 4 30 4         ld r4 @4 fp
+ 127 D 2 3 30 3         ld r3 @3 fp
+ 128 D 2 2 30 2         ld r2 @2 fp
+ 129 D 2 1 30 1         ld r1 @1 fp
+ 130 X 31 27 0 0 19     ret rads
+                        ; fun dequeue pv 0
+                        :dequeue
+                        ; gnAsg :(nump (- nump 1 ))
+                        ; gnAsg :(#1 currentp )
+                        ; gnAsg :((vec #1 5 )0 )
+ 131 D 4 1 30 1         st r1 @1 fp
+ 132 D 4 2 30 2         st r2 @2 fp
+ 133 D 4 3 30 3         st r3 @3 fp
+ 134 D 10 30 30 4       add fp fp #4
+ 135 D 4 27 30 0        st rads @0 fp
+ 136 L 1 2 1102         ld r2 nump
+ 137 D 11 3 2 1         sub r3 r2 #1
+ 138 L 3 3 1102         st r3 nump
+ 139 L 1 1 1103         ld r1 currentp
+ 140 L 5 2 0            mov r2 #0
+ 141 L 5 3 5            mov r3 #5
+ 142 X 31 2 1 3 18      st r2 +r1 r3
+                        :L111
+ 143 D 2 27 30 0        ld rads @0 fp
+ 144 D 11 30 30 4       sub fp fp #4
+ 145 D 2 3 30 3         ld r3 @3 fp
+ 146 D 2 2 30 2         ld r2 @2 fp
+ 147 D 2 1 30 1         ld r1 @1 fp
+ 148 X 31 27 0 0 19     ret rads
+                        ; fun createp pv 1
+                        :createp
+                        ; gnAsg :(#2 (call newp ))
+                        ; gnAsg :((vec #2 0 )#1 )
+                        ; gnAsg :((vec #2 1 )(+ (call newStack )16 ))
+                        ; gnAsg :((vec #2 2 )(call newFrame ))
+                        ; gnAsg :((vec #2 3 )0 )
+                        ; gnAsg :((vec #2 4 )0 )
+                        ; gnAsg :((vec #2 5 )1 )
+ 149 D 4 1 30 1         st r1 @1 fp
+ 150 D 4 2 30 2         st r2 @2 fp
+ 151 D 4 3 30 3         st r3 @3 fp
+ 152 D 4 4 30 4         st r4 @4 fp
+ 153 D 10 30 30 5       add fp fp #5
+ 154 D 4 27 30 0        st rads @0 fp
+ 155 X 31 29 1 0 22     pop sp r1
+ 156 L 7 27 4           jal rads newp
+ 157 X 31 2 28 0 16     mov r2 r28
+ 158 L 5 3 0            mov r3 #0
+ 159 X 31 1 2 3 18      st r1 +r2 r3
+ 160 L 7 27 15          jal rads newStack
+ 161 D 10 3 28 16       add r3 r28 #16
+ 162 L 5 4 1            mov r4 #1
+ 163 X 31 3 2 4 18      st r3 +r2 r4
+ 164 L 7 27 26          jal rads newFrame
+ 165 L 5 3 2            mov r3 #2
+ 166 X 31 28 2 3 18     st r28 +r2 r3
+ 167 L 5 3 0            mov r3 #0
+ 168 L 5 4 3            mov r4 #3
+ 169 X 31 3 2 4 18      st r3 +r2 r4
+ 170 L 5 3 0            mov r3 #0
+ 171 L 5 4 4            mov r4 #4
+ 172 X 31 3 2 4 18      st r3 +r2 r4
+ 173 L 5 3 1            mov r3 #1
+ 174 L 5 4 5            mov r4 #5
+ 175 X 31 3 2 4 18      st r3 +r2 r4
+ 176 X 31 29 2 0 21     push sp r2
+ 177 L 7 27 100         jal rads enqueue
+ 178 X 31 28 2 0 16     mov retval r2
+ 179 L 6 0 180          jmp L112
+                        :L112
+ 180 D 2 27 30 0        ld rads @0 fp
+ 181 D 11 30 30 5       sub fp fp #5
+ 182 D 2 4 30 4         ld r4 @4 fp
+ 183 D 2 3 30 3         ld r3 @3 fp
+ 184 D 2 2 30 2         ld r2 @2 fp
+ 185 D 2 1 30 1         ld r1 @1 fp
+ 186 X 31 27 0 0 19     ret rads
+                        ; fun nextQ pv 0
+                        :nextQ
+                        ; gnAsg :(qq (vec qq 1 ))
+ 187 D 4 1 30 1         st r1 @1 fp
+ 188 D 4 2 30 2         st r2 @2 fp
+ 189 D 4 3 30 3         st r3 @3 fp
+ 190 D 10 30 30 4       add fp fp #4
+ 191 D 4 27 30 0        st rads @0 fp
+ 192 L 5 2 1            mov r2 #1
+ 193 L 1 3 1101         ld r3 qq
+ 194 X 31 1 3 2 17      ld r1 +r3 r2
+ 195 L 3 1 1101         st r1 qq
+ 196 L 5 2 0            mov r2 #0
+ 197 L 1 3 1101         ld r3 qq
+ 198 X 31 1 3 2 17      ld r1 +r3 r2
+ 199 X 31 28 1 0 16     mov retval r1
+ 200 L 6 0 201          jmp L113
+                        :L113
+ 201 D 2 27 30 0        ld rads @0 fp
+ 202 D 11 30 30 4       sub fp fp #4
+ 203 D 2 3 30 3         ld r3 @3 fp
+ 204 D 2 2 30 2         ld r2 @2 fp
+ 205 D 2 1 30 1         ld r1 @1 fp
+ 206 X 31 27 0 0 19     ret rads
+                        ; fun nextp pv 0
+                        :nextp
+                        ; gnAsg :(#1 (call nextQ ))
+                        ; gnAsg :(#1 (call nextQ ))
+ 207 D 4 1 30 1         st r1 @1 fp
+ 208 D 4 2 30 2         st r2 @2 fp
+ 209 D 4 3 30 3         st r3 @3 fp
+ 210 D 10 30 30 4       add fp fp #4
+ 211 D 4 27 30 0        st rads @0 fp
+ 212 L 7 27 187         jal rads nextQ
+ 213 X 31 1 28 0 16     mov r1 r28
+ 214 L 6 0 217          jmp L115
+                        :L116
+ 215 L 7 27 187         jal rads nextQ
+ 216 X 31 1 28 0 16     mov r1 r28
+                        :L115
+ 217 L 5 3 5            mov r3 #5
+ 218 X 31 2 1 3 17      ld r2 +r1 r3
+ 219 D 17 3 2 0         eq r3 r2 #0
+ 220 L 8 3 215          jt r3 L116
+ 221 X 31 28 1 0 16     mov retval r1
+ 222 L 6 0 223          jmp L114
+                        :L114
+ 223 D 2 27 30 0        ld rads @0 fp
+ 224 D 11 30 30 4       sub fp fp #4
+ 225 D 2 3 30 3         ld r3 @3 fp
+ 226 D 2 2 30 2         ld r2 @2 fp
+ 227 D 2 1 30 1         ld r1 @1 fp
+ 228 X 31 27 0 0 19     ret rads
+                        ; fun terminate pv 0
+                        :terminate
+ 229 D 4 1 30 1         st r1 @1 fp
+ 230 D 10 30 30 2       add fp fp #2
+ 231 D 4 27 30 0        st rads @0 fp
+ 232 L 5 1 0            mov r1 #0
+ 233 X 31 1 15 0 20     trap r1 #15
+ 234 L 7 27 131         jal rads dequeue
+ 235 L 5 1 0            mov r1 #0
+ 236 X 31 1 16 0 20     trap r1 #16
+ 237 X 31 0 0 0 24      int #0
+                        :L117
+ 238 D 2 27 30 0        ld rads @0 fp
+ 239 D 11 30 30 2       sub fp fp #2
+ 240 D 2 1 30 1         ld r1 @1 fp
+ 241 X 31 27 0 0 19     ret rads
+                        ; fun int0 pv 0
+                        :int0
+                        ; gnAsg :(currentp (call nextp ))
+ 242 L 1 21 1103        ld r21 currentp
+ 243 X 31 20 0 0 28     xch r20
+ 244 D 4 20 21 0        st r20 @0 r21
+ 245 X 31 29 0 0 26     pushm sp
+ 246 D 4 29 21 1        st sp @1 r21
+ 247 D 4 30 21 2        st fp @2 r21
+ 248 D 4 27 21 3        st rads @3 r21
+ 249 D 4 28 21 4        st retval @4 r21
+ 250 L 1 1 1102         ld r1 nump
+ 251 D 17 2 1 0         eq r2 r1 #0
+ 252 L 9 2 254          jf r2 L119
+ 253 X 31 0 0 0 20      trap r0 #0
+                        :L119
+ 254 L 7 27 207         jal rads nextp
+ 255 L 3 28 1103        st r28 currentp
+ 256 L 1 21 1103        ld r21 currentp
+ 257 D 2 29 21 1        ld sp @1 r21
+ 258 X 31 29 0 0 27     popm sp
+ 259 D 2 30 21 2        ld fp @2 r21
+ 260 D 2 27 21 3        ld rads @3 r21
+ 261 D 2 28 21 4        ld retval @4 r21
+ 262 D 2 20 21 0        ld r20 @0 r21
+ 263 X 31 20 0 0 28     xch r20
+                        :L118
+ 264 X 31 0 0 0 25      reti
+                        ; fun boot pv 0
+                        :boot
+                        ; gnAsg :(currentp (call newp ))
+ 265 D 4 1 30 1         st r1 @1 fp
+ 266 D 10 30 30 2       add fp fp #2
+ 267 D 4 27 30 0        st rads @0 fp
+ 268 L 7 27 4           jal rads newp
+ 269 L 3 28 1103        st r28 currentp
+ 270 L 5 1 0            mov r1 #0
+ 271 X 31 1 16 0 20     trap r1 #16
+ 272 X 31 0 0 0 24      int #0
+                        :L120
+ 273 D 2 27 30 0        ld rads @0 fp
+ 274 D 11 30 30 2       sub fp fp #2
+ 275 D 2 1 30 1         ld r1 @1 fp
+ 276 X 31 27 0 0 19     ret rads
+                        ; fun free pv 1
+                        :free
+                        ; gnAsg :((vec #1 1 )freelist )
+                        ; gnAsg :(freelist #1 )
+ 277 D 4 1 30 1         st r1 @1 fp
+ 278 D 4 2 30 2         st r2 @2 fp
+ 279 D 4 3 30 3         st r3 @3 fp
+ 280 D 10 30 30 4       add fp fp #4
+ 281 D 4 27 30 0        st rads @0 fp
+ 282 X 31 29 1 0 22     pop sp r1
+ 283 L 1 2 1104         ld r2 freelist
+ 284 L 5 3 1            mov r3 #1
+ 285 X 31 2 1 3 18      st r2 +r1 r3
+ 286 L 3 1 1104         st r1 freelist
+                        :L121
+ 287 D 2 27 30 0        ld rads @0 fp
+ 288 D 11 30 30 4       sub fp fp #4
+ 289 D 2 3 30 3         ld r3 @3 fp
+ 290 D 2 2 30 2         ld r2 @2 fp
+ 291 D 2 1 30 1         ld r1 @1 fp
+ 292 X 31 27 0 0 19     ret rads
+                        ; fun deleteL pv 1
+                        :deleteL
+                        ; gnAsg :(#2 (vec #1 0 ))
+                        ; gnAsg :(#3 (vec #1 1 ))
+                        ; gnAsg :((vec #1 0 )0 )
+                        ; gnAsg :((vec #1 1 )0 )
+                        ; gnAsg :((vec #1 0 )(vec #2 1 ))
+                        ; gnAsg :(#4 (vec #2 0 ))
+ 293 D 4 1 30 1         st r1 @1 fp
+ 294 D 4 2 30 2         st r2 @2 fp
+ 295 D 4 3 30 3         st r3 @3 fp
+ 296 D 4 4 30 4         st r4 @4 fp
+ 297 D 4 5 30 5         st r5 @5 fp
+ 298 D 4 6 30 6         st r6 @6 fp
+ 299 D 10 30 30 7       add fp fp #7
+ 300 D 4 27 30 0        st rads @0 fp
+ 301 X 31 29 1 0 22     pop sp r1
+ 302 L 5 6 0            mov r6 #0
+ 303 X 31 5 1 6 17      ld r5 +r1 r6
+ 304 X 31 2 5 0 16      mov r2 r5
+ 305 L 5 6 1            mov r6 #1
+ 306 X 31 5 1 6 17      ld r5 +r1 r6
+ 307 X 31 3 5 0 16      mov r3 r5
+ 308 X 31 5 2 3 7       eq r5 r2 r3
+ 309 L 9 5 317          jf r5 L123
+ 310 L 5 5 0            mov r5 #0
+ 311 L 5 6 0            mov r6 #0
+ 312 X 31 5 1 6 18      st r5 +r1 r6
+ 313 L 5 5 0            mov r5 #0
+ 314 L 5 6 1            mov r6 #1
+ 315 X 31 5 1 6 18      st r5 +r1 r6
+ 316 L 6 0 321          jmp L124
+                        :L123
+ 317 L 5 6 1            mov r6 #1
+ 318 X 31 5 2 6 17      ld r5 +r2 r6
+ 319 L 5 6 0            mov r6 #0
+ 320 X 31 5 1 6 18      st r5 +r1 r6
+                        :L124
+ 321 L 5 6 0            mov r6 #0
+ 322 X 31 5 2 6 17      ld r5 +r2 r6
+ 323 X 31 4 5 0 16      mov r4 r5
+ 324 X 31 29 2 0 21     push sp r2
+ 325 L 7 27 277         jal rads free
+ 326 X 31 28 4 0 16     mov retval r4
+ 327 L 6 0 328          jmp L122
+                        :L122
+ 328 D 2 27 30 0        ld rads @0 fp
+ 329 D 11 30 30 7       sub fp fp #7
+ 330 D 2 6 30 6         ld r6 @6 fp
+ 331 D 2 5 30 5         ld r5 @5 fp
+ 332 D 2 4 30 4         ld r4 @4 fp
+ 333 D 2 3 30 3         ld r3 @3 fp
+ 334 D 2 2 30 2         ld r2 @2 fp
+ 335 D 2 1 30 1         ld r1 @1 fp
+ 336 X 31 27 0 0 19     ret rads
+                        ; fun blockp pv 0
+                        :blockp
+ 337 D 4 1 30 1         st r1 @1 fp
+ 338 D 10 30 30 2       add fp fp #2
+ 339 D 4 27 30 0        st rads @0 fp
+ 340 L 7 27 131         jal rads dequeue
+ 341 L 5 1 0            mov r1 #0
+ 342 X 31 1 16 0 20     trap r1 #16
+ 343 X 31 0 0 0 24      int #0
+                        :L125
+ 344 D 2 27 30 0        ld rads @0 fp
+ 345 D 11 30 30 2       sub fp fp #2
+ 346 D 2 1 30 1         ld r1 @1 fp
+ 347 X 31 27 0 0 19     ret rads
+                        ; fun wakeup pv 1
+                        :wakeup
+                        ; gnAsg :(nump (+ nump 1 ))
+                        ; gnAsg :((vec #1 5 )1 )
+ 348 D 4 1 30 1         st r1 @1 fp
+ 349 D 4 2 30 2         st r2 @2 fp
+ 350 D 4 3 30 3         st r3 @3 fp
+ 351 D 10 30 30 4       add fp fp #4
+ 352 D 4 27 30 0        st rads @0 fp
+ 353 X 31 29 1 0 22     pop sp r1
+ 354 L 1 2 1102         ld r2 nump
+ 355 D 10 3 2 1         add r3 r2 #1
+ 356 L 3 3 1102         st r3 nump
+ 357 L 5 2 1            mov r2 #1
+ 358 L 5 3 5            mov r3 #5
+ 359 X 31 2 1 3 18      st r2 +r1 r3
+                        :L126
+ 360 D 2 27 30 0        ld rads @0 fp
+ 361 D 11 30 30 4       sub fp fp #4
+ 362 D 2 3 30 3         ld r3 @3 fp
+ 363 D 2 2 30 2         ld r2 @2 fp
+ 364 D 2 1 30 1         ld r1 @1 fp
+ 365 X 31 27 0 0 19     ret rads
+                        ; fun newsem pv 1
+                        :newsem
+                        ; gnAsg :(#2 (call malloc 2 ))
+                        ; gnAsg :((vec #2 0 )#1 )
+                        ; gnAsg :((vec #2 1 )(call new 0 ))
+ 366 D 4 1 30 1         st r1 @1 fp
+ 367 D 4 2 30 2         st r2 @2 fp
+ 368 D 4 3 30 3         st r3 @3 fp
+ 369 D 10 30 30 4       add fp fp #4
+ 370 D 4 27 30 0        st rads @0 fp
+ 371 X 31 29 1 0 22     pop sp r1
+ 372 L 5 3 2            mov r3 #2
+ 373 X 31 3 19 0 20     trap r3 #19
+ 374 X 31 2 28 0 16     mov r2 r28
+ 375 L 5 3 0            mov r3 #0
+ 376 X 31 1 2 3 18      st r1 +r2 r3
+ 377 L 5 3 0            mov r3 #0
+ 378 X 31 29 3 0 21     push sp r3
+ 379 L 7 27 37          jal rads new
+ 380 L 5 3 1            mov r3 #1
+ 381 X 31 28 2 3 18     st r28 +r2 r3
+ 382 X 31 28 2 0 16     mov retval r2
+ 383 L 6 0 384          jmp L127
+                        :L127
+ 384 D 2 27 30 0        ld rads @0 fp
+ 385 D 11 30 30 4       sub fp fp #4
+ 386 D 2 3 30 3         ld r3 @3 fp
+ 387 D 2 2 30 2         ld r2 @2 fp
+ 388 D 2 1 30 1         ld r1 @1 fp
+ 389 X 31 27 0 0 19     ret rads
+                        ; fun wait pv 1
+                        :wait
+                        ; gnAsg :((vec #1 0 )(- (vec #1 0 )1 ))
+                        ; gnAsg :(#2 (call new currentp ))
+ 390 D 4 1 30 1         st r1 @1 fp
+ 391 D 4 2 30 2         st r2 @2 fp
+ 392 D 4 3 30 3         st r3 @3 fp
+ 393 D 4 4 30 4         st r4 @4 fp
+ 394 D 10 30 30 5       add fp fp #5
+ 395 D 4 27 30 0        st rads @0 fp
+ 396 X 31 29 1 0 22     pop sp r1
+ 397 L 5 3 0            mov r3 #0
+ 398 X 31 3 15 0 20     trap r3 #15
+ 399 L 5 4 0            mov r4 #0
+ 400 X 31 3 1 4 17      ld r3 +r1 r4
+ 401 D 11 4 3 1         sub r4 r3 #1
+ 402 L 5 3 0            mov r3 #0
+ 403 X 31 4 1 3 18      st r4 +r1 r3
+ 404 L 5 4 0            mov r4 #0
+ 405 X 31 3 1 4 17      ld r3 +r1 r4
+ 406 D 19 4 3 0         lt r4 r3 #0
+ 407 L 9 4 418          jf r4 L129
+ 408 L 1 3 1103         ld r3 currentp
+ 409 X 31 29 3 0 21     push sp r3
+ 410 L 7 27 37          jal rads new
+ 411 X 31 2 28 0 16     mov r2 r28
+ 412 L 5 4 1            mov r4 #1
+ 413 X 31 3 1 4 17      ld r3 +r1 r4
+ 414 X 31 29 3 0 21     push sp r3
+ 415 X 31 29 2 0 21     push sp r2
+ 416 L 7 27 69          jal rads appendL
+ 417 L 7 27 337         jal rads blockp
+                        :L129
+ 418 L 5 3 0            mov r3 #0
+ 419 X 31 3 16 0 20     trap r3 #16
+                        :L128
+ 420 D 2 27 30 0        ld rads @0 fp
+ 421 D 11 30 30 5       sub fp fp #5
+ 422 D 2 4 30 4         ld r4 @4 fp
+ 423 D 2 3 30 3         ld r3 @3 fp
+ 424 D 2 2 30 2         ld r2 @2 fp
+ 425 D 2 1 30 1         ld r1 @1 fp
+ 426 X 31 27 0 0 19     ret rads
+                        ; fun signal pv 1
+                        :signal
+                        ; gnAsg :((vec #1 0 )(+ (vec #1 0 )1 ))
+                        ; gnAsg :(#2 (call deleteL (vec #1 1 )))
+ 427 D 4 1 30 1         st r1 @1 fp
+ 428 D 4 2 30 2         st r2 @2 fp
+ 429 D 4 3 30 3         st r3 @3 fp
+ 430 D 4 4 30 4         st r4 @4 fp
+ 431 D 10 30 30 5       add fp fp #5
+ 432 D 4 27 30 0        st rads @0 fp
+ 433 X 31 29 1 0 22     pop sp r1
+ 434 L 5 3 0            mov r3 #0
+ 435 X 31 3 15 0 20     trap r3 #15
+ 436 L 5 4 0            mov r4 #0
+ 437 X 31 3 1 4 17      ld r3 +r1 r4
+ 438 D 10 4 3 1         add r4 r3 #1
+ 439 L 5 3 0            mov r3 #0
+ 440 X 31 4 1 3 18      st r4 +r1 r3
+ 441 L 5 4 0            mov r4 #0
+ 442 X 31 3 1 4 17      ld r3 +r1 r4
+ 443 D 20 4 3 0         le r4 r3 #0
+ 444 L 9 4 452          jf r4 L131
+ 445 L 5 4 1            mov r4 #1
+ 446 X 31 3 1 4 17      ld r3 +r1 r4
+ 447 X 31 29 3 0 21     push sp r3
+ 448 L 7 27 293         jal rads deleteL
+ 449 X 31 2 28 0 16     mov r2 r28
+ 450 X 31 29 2 0 21     push sp r2
+ 451 L 7 27 348         jal rads wakeup
+                        :L131
+ 452 L 5 3 0            mov r3 #0
+ 453 X 31 3 16 0 20     trap r3 #16
+                        :L130
+ 454 D 2 27 30 0        ld rads @0 fp
+ 455 D 11 30 30 5       sub fp fp #5
+ 456 D 2 4 30 4         ld r4 @4 fp
+ 457 D 2 3 30 3         ld r3 @3 fp
+ 458 D 2 2 30 2         ld r2 @2 fp
+ 459 D 2 1 30 1         ld r1 @1 fp
+ 460 X 31 27 0 0 19     ret rads
+                        ; fun reader pv 0
+                        :reader
+                        ; gnAsg :(#1 0 )
+ 461 D 4 1 30 1         st r1 @1 fp
+ 462 D 4 2 30 2         st r2 @2 fp
+ 463 D 10 30 30 3       add fp fp #3
+ 464 D 4 27 30 0        st rads @0 fp
+ 465 L 5 1 0            mov r1 #0
+ 466 L 6 0 484          jmp L133
+                        :L134
+ 467 L 1 2 1105         ld r2 full
+ 468 X 31 29 2 0 21     push sp r2
+ 469 L 7 27 390         jal rads wait
+ 470 L 1 2 1107         ld r2 mutex
+ 471 X 31 29 2 0 21     push sp r2
+ 472 L 7 27 390         jal rads wait
+ 473 L 5 2 43           mov r2 #43
+ 474 X 31 2 2 0 20      trap r2 #2
+ 475 L 1 2 1108         ld r2 shareVar
+ 476 X 31 2 1 0 20      trap r2 #1
+ 477 L 1 2 1107         ld r2 mutex
+ 478 X 31 29 2 0 21     push sp r2
+ 479 L 7 27 427         jal rads signal
+ 480 D 10 1 1 1         add r1 r1 #1
+ 481 L 1 2 1106         ld r2 empty
+ 482 X 31 29 2 0 21     push sp r2
+ 483 L 7 27 427         jal rads signal
+                        :L133
+ 484 D 19 2 1 5         lt r2 r1 #5
+ 485 L 8 2 467          jt r2 L134
+ 486 L 7 27 229         jal rads terminate
+                        :L132
+ 487 D 2 27 30 0        ld rads @0 fp
+ 488 D 11 30 30 3       sub fp fp #3
+ 489 D 2 2 30 2         ld r2 @2 fp
+ 490 D 2 1 30 1         ld r1 @1 fp
+ 491 X 31 27 0 0 19     ret rads
+                        ; fun writer pv 0
+                        :writer
+                        ; gnAsg :(#1 0 )
+                        ; gnAsg :(shareVar (+ shareVar 1 ))
+ 492 D 4 1 30 1         st r1 @1 fp
+ 493 D 4 2 30 2         st r2 @2 fp
+ 494 D 4 3 30 3         st r3 @3 fp
+ 495 D 10 30 30 4       add fp fp #4
+ 496 D 4 27 30 0        st rads @0 fp
+ 497 L 5 1 0            mov r1 #0
+ 498 L 6 0 515          jmp L136
+                        :L137
+ 499 L 1 2 1106         ld r2 empty
+ 500 X 31 29 2 0 21     push sp r2
+ 501 L 7 27 390         jal rads wait
+ 502 L 1 2 1107         ld r2 mutex
+ 503 X 31 29 2 0 21     push sp r2
+ 504 L 7 27 390         jal rads wait
+ 505 L 1 2 1108         ld r2 shareVar
+ 506 D 10 3 2 1         add r3 r2 #1
+ 507 L 3 3 1108         st r3 shareVar
+ 508 L 1 2 1107         ld r2 mutex
+ 509 X 31 29 2 0 21     push sp r2
+ 510 L 7 27 427         jal rads signal
+ 511 D 10 1 1 1         add r1 r1 #1
+ 512 L 1 2 1105         ld r2 full
+ 513 X 31 29 2 0 21     push sp r2
+ 514 L 7 27 427         jal rads signal
+                        :L136
+ 515 D 19 2 1 5         lt r2 r1 #5
+ 516 L 8 2 499          jt r2 L137
+ 517 L 7 27 229         jal rads terminate
+                        :L135
+ 518 D 2 27 30 0        ld rads @0 fp
+ 519 D 11 30 30 4       sub fp fp #4
+ 520 D 2 3 30 3         ld r3 @3 fp
+ 521 D 2 2 30 2         ld r2 @2 fp
+ 522 D 2 1 30 1         ld r1 @1 fp
+ 523 X 31 27 0 0 19     ret rads
+                        ; fun main pv 0
+                        :main
+                        ; gnAsg :(nump 0 )
+                        ; gnAsg :(freelist 0 )
+                        ; gnAsg :(Q (call malloc 2 ))
+                        ; gnAsg :(#1 (call createp (& reader )))
+                        ; gnAsg :(#1 (call createp (& writer )))
+                        ; gnAsg :(qq (vec Q 0 ))
+                        ; gnAsg :(full (call newsem 0 ))
+                        ; gnAsg :(empty (call newsem 1 ))
+                        ; gnAsg :(mutex (call newsem 1 ))
+                        ; gnAsg :(shareVar 0 )
+ 524 D 4 1 30 1         st r1 @1 fp
+ 525 D 4 2 30 2         st r2 @2 fp
+ 526 D 4 3 30 3         st r3 @3 fp
+ 527 D 4 4 30 4         st r4 @4 fp
+ 528 D 10 30 30 5       add fp fp #5
+ 529 D 4 27 30 0        st rads @0 fp
+ 530 L 5 1 242          mov r1 #int0
+ 531 L 3 1 1000         st r1 1000
+ 532 L 5 2 0            mov r2 #0
+ 533 X 31 2 15 0 20     trap r2 #15
+ 534 L 5 2 0            mov r2 #0
+ 535 L 3 2 1102         st r2 nump
+ 536 L 5 2 0            mov r2 #0
+ 537 L 3 2 1104         st r2 freelist
+ 538 L 5 2 2            mov r2 #2
+ 539 X 31 2 19 0 20     trap r2 #19
+ 540 L 3 28 1100        st r28 Q
+ 541 L 5 2 461          mov r2 #reader
+ 542 X 31 29 2 0 21     push sp r2
+ 543 L 7 27 149         jal rads createp
+ 544 X 31 1 28 0 16     mov r1 r28
+ 545 L 5 2 492          mov r2 #writer
+ 546 X 31 29 2 0 21     push sp r2
+ 547 L 7 27 149         jal rads createp
+ 548 X 31 1 28 0 16     mov r1 r28
+ 549 L 5 3 0            mov r3 #0
+ 550 L 1 4 1100         ld r4 Q
+ 551 X 31 2 4 3 17      ld r2 +r4 r3
+ 552 L 3 2 1101         st r2 qq
+ 553 L 5 2 0            mov r2 #0
+ 554 X 31 29 2 0 21     push sp r2
+ 555 L 7 27 366         jal rads newsem
+ 556 L 3 28 1105        st r28 full
+ 557 L 5 2 1            mov r2 #1
+ 558 X 31 29 2 0 21     push sp r2
+ 559 L 7 27 366         jal rads newsem
+ 560 L 3 28 1106        st r28 empty
+ 561 L 5 2 1            mov r2 #1
+ 562 X 31 29 2 0 21     push sp r2
+ 563 L 7 27 366         jal rads newsem
+ 564 L 3 28 1107        st r28 mutex
+ 565 L 5 2 0            mov r2 #0
+ 566 L 3 2 1108         st r2 shareVar
+ 567 L 5 2 400          mov r2 #400
+ 568 X 31 2 13 0 20     trap r2 #13
+ 569 L 7 27 265         jal rads boot
+                        :L138
+ 570 D 2 27 30 0        ld rads @0 fp
+ 571 D 11 30 30 5       sub fp fp #5
+ 572 D 2 4 30 4         ld r4 @4 fp
+ 573 D 2 3 30 3         ld r3 @3 fp
+ 574 D 2 2 30 2         ld r2 @2 fp
+ 575 D 2 1 30 1         ld r1 @1 fp
+ 576 X 31 27 0 0 19     ret rads
+                        .data 200
+                        .end

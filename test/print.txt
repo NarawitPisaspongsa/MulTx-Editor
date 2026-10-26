@@ -1,0 +1,23 @@
+// print a .. z to screen with interrupt
+
+asm(x)
+
+interrupt()
+  asm("trap r1 #2")
+  asm("add r1 r1 #1")
+
+main()
+  asm("mov r1 #interrupt")
+  asm("st r1 1000")
+  asm("mov r1 #1")
+  asm("trap r1 #12 ; enable int")
+  asm("mov r1 #10")	
+  asm("trap r1 #10 ; set timer1 = 100")
+  asm("mov r1 #100")
+  asm("trap r1 #11  ; set div = 100")
+
+  i = 32
+  while( i < 50 )
+    i = i
+
+    

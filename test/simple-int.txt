@@ -1,0 +1,25 @@
+
+// simple interrupt
+
+// dummpy header
+asm(x)
+
+cnt		// global counter
+
+interrupt()
+  print(cnt," ")
+  cnt = cnt + 1
+
+// a simple loop run for 1000 inst.
+// when interrupt occurs, it prints out cnt
+
+main()
+  // set up interrupt vector
+  asm("mov r1 #interrupt")
+  asm("st r1 1000")
+  asm("mov r1 #200")
+  asm("trap r1 #14")
+//  asm("trap r0 #15")  // disable int
+  cnt = 0
+  while( 1 )   // wait for int
+    asm("trap r0 #17")   // sleep and wait for interrupt

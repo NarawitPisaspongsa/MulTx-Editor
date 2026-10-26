@@ -1,0 +1,1690 @@
+.symbol
+ fp 30
+ sp 29
+ retval 28
+ rads 27
+ currentp 1100
+ nump 1101
+ ready_head 1102
+ ready_tail 1103
+ free_node_ptr 1104
+ pcb_pool_ptr 1105
+ tick_count 1106
+ stack_bases 1107
+ frame_bases 1112
+ task_pids 1117
+ cell0 1122
+ cell1 1138
+ edit_buf 1154
+ cell_sem 1186
+ cell_owner 1188
+ cell_rev 1190
+ cell_wait_cnt 1192
+ audit_snapshots 1194
+ snapshot_count 1202
+ p0 1203
+ p1 1204
+ p2 1205
+ p3 1206
+ p4 1207
+ boot_p 1208
+.code 0
+ mov fp #3500
+ mov sp #3000
+ jal rads main
+ trap r0 #0
+; fun init_memory_zones pv 0
+:init_memory_zones
+; gnAsg :((vec stack_bases 0 )3000 )
+; gnAsg :((vec frame_bases 0 )3400 )
+; gnAsg :((vec stack_bases 1 )4000 )
+; gnAsg :((vec frame_bases 1 )4400 )
+; gnAsg :((vec stack_bases 2 )5000 )
+; gnAsg :((vec frame_bases 2 )5400 )
+; gnAsg :((vec stack_bases 3 )6000 )
+; gnAsg :((vec frame_bases 3 )6400 )
+; gnAsg :((vec stack_bases 4 )7000 )
+; gnAsg :((vec frame_bases 4 )7400 )
+; gnAsg :(pcb_pool_ptr 2100 )
+; gnAsg :(nump 0 )
+; gnAsg :(ready_head 0 )
+; gnAsg :(ready_tail 0 )
+; gnAsg :(tick_count 0 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #3000
+mov r2 #0
+st r1 @stack_bases r2
+mov r1 #3400
+mov r2 #0
+st r1 @frame_bases r2
+mov r1 #4000
+mov r2 #1
+st r1 @stack_bases r2
+mov r1 #4400
+mov r2 #1
+st r1 @frame_bases r2
+mov r1 #5000
+mov r2 #2
+st r1 @stack_bases r2
+mov r1 #5400
+mov r2 #2
+st r1 @frame_bases r2
+mov r1 #6000
+mov r2 #3
+st r1 @stack_bases r2
+mov r1 #6400
+mov r2 #3
+st r1 @frame_bases r2
+mov r1 #7000
+mov r2 #4
+st r1 @stack_bases r2
+mov r1 #7400
+mov r2 #4
+st r1 @frame_bases r2
+mov r1 #2100
+st r1 pcb_pool_ptr
+mov r1 #0
+st r1 nump
+mov r1 #0
+st r1 ready_head
+mov r1 #0
+st r1 ready_tail
+mov r1 #0
+st r1 tick_count
+:L101
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun newp pv 1
+:newp
+; gnAsg :(#2 pcb_pool_ptr )
+; gnAsg :(pcb_pool_ptr (+ pcb_pool_ptr 8 ))
+; gnAsg :((vec #2 0 )0 )
+; gnAsg :((vec #2 1 )(vec stack_bases #1 ))
+; gnAsg :((vec #2 2 )(vec frame_bases #1 ))
+; gnAsg :((vec #2 3 )1 )
+; gnAsg :((vec #2 4 )#1 )
+; gnAsg :((vec #2 5 )(- 0 1 ))
+; gnAsg :((vec #2 6 )0 )
+; gnAsg :((vec #2 7 )0 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r1
+ld r2 pcb_pool_ptr
+ld r3 pcb_pool_ptr
+add r4 r3 #8
+st r4 pcb_pool_ptr
+mov r3 #0
+mov r4 #0
+st r3 +r2 r4
+ld r3 @stack_bases r1
+mov r4 #1
+st r3 +r2 r4
+ld r3 @frame_bases r1
+mov r4 #2
+st r3 +r2 r4
+mov r3 #1
+mov r4 #3
+st r3 +r2 r4
+mov r3 #4
+st r1 +r2 r3
+mov r3 #0
+sub r4 r3 #1
+mov r3 #5
+st r4 +r2 r3
+mov r3 #0
+mov r4 #6
+st r3 +r2 r4
+mov r3 #0
+mov r4 #7
+st r3 +r2 r4
+mov retval r2
+jmp L102
+:L102
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun enqueue pv 1
+:enqueue
+; gnAsg :((vec #1 3 )1 )
+; gnAsg :((vec #1 5 )(- 0 1 ))
+; gnAsg :(ready_head #1 )
+; gnAsg :(ready_tail #1 )
+; gnAsg :((vec #1 7 )#1 )
+; gnAsg :((vec ready_tail 7 )#1 )
+; gnAsg :((vec #1 7 )ready_head )
+; gnAsg :(ready_tail #1 )
+; gnAsg :(nump (+ nump 1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+pop sp r1
+mov r2 #1
+mov r3 #3
+st r2 +r1 r3
+mov r2 #0
+sub r3 r2 #1
+mov r2 #5
+st r3 +r1 r2
+ld r2 ready_head
+eq r3 r2 #0
+jf r3 L104
+st r1 ready_head
+st r1 ready_tail
+mov r2 #7
+st r1 +r1 r2
+jmp L105
+:L104
+mov r2 #7
+ld r3 ready_tail
+st r1 +r3 r2
+ld r2 ready_head
+mov r3 #7
+st r2 +r1 r3
+st r1 ready_tail
+:L105
+ld r2 nump
+add r3 r2 #1
+st r3 nump
+:L103
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun remove_from_ready pv 1
+:remove_from_ready
+; gnAsg :(ready_head 0 )
+; gnAsg :(ready_tail 0 )
+; gnAsg :(nump 0 )
+; gnAsg :(#2 ready_head )
+; gnAsg :(#3 (vec ready_head 7 ))
+; gnAsg :(#4 0 )
+; gnAsg :((vec #2 7 )(vec #3 7 ))
+; gnAsg :(ready_head (vec #3 7 ))
+; gnAsg :(ready_tail #2 )
+; gnAsg :(nump (- nump 1 ))
+; gnAsg :(#2 #3 )
+; gnAsg :(#3 (vec #3 7 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+st r7 @7 fp
+add fp fp #8
+st rads @0 fp
+pop sp r1
+ld r5 nump
+le r6 r5 #1
+jf r6 L107
+mov r5 #0
+st r5 ready_head
+mov r5 #0
+st r5 ready_tail
+mov r5 #0
+st r5 nump
+mov retval #0
+jmp L106
+:L107
+ld r2 ready_head
+mov r6 #7
+ld r7 ready_head
+ld r5 +r7 r6
+mov r3 r5
+mov r4 #0
+jmp L108
+:L109
+eq r5 r3 r1
+jf r5 L110
+mov r6 #7
+ld r5 +r3 r6
+mov r6 #7
+st r5 +r2 r6
+ld r6 ready_head
+eq r5 r1 r6
+jf r5 L111
+mov r6 #7
+ld r5 +r3 r6
+st r5 ready_head
+:L111
+ld r6 ready_tail
+eq r5 r1 r6
+jf r5 L112
+st r2 ready_tail
+:L112
+ld r5 nump
+sub r6 r5 #1
+st r6 nump
+mov retval r2
+jmp L106
+:L110
+mov r2 r3
+mov r6 #7
+ld r5 +r3 r6
+mov r3 r5
+add r4 r4 #1
+:L108
+ld r6 nump
+lt r5 r4 r6
+jt r5 L109
+ld r5 currentp
+mov retval r5
+jmp L106
+:L106
+ld rads @0 fp
+sub fp fp #8
+ld r7 @7 fp
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun nextp pv 0
+:nextp
+; gnAsg :(#1 (vec currentp 7 ))
+; gnAsg :(#1 ready_head )
+; gnAsg :(currentp #1 )
+; gnAsg :((vec currentp 6 )(+ (vec currentp 6 )1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+ld r2 nump
+eq r3 r2 #0
+jf r3 L114
+mov retval #0
+jmp L113
+:L114
+mov r3 #7
+ld r4 currentp
+ld r2 +r4 r3
+mov r1 r2
+eq r2 r1 #0
+jf r2 L115
+ld r1 ready_head
+:L115
+st r1 currentp
+mov r3 #6
+ld r4 currentp
+ld r2 +r4 r3
+add r3 r2 #1
+mov r2 #6
+ld r4 currentp
+st r3 +r4 r2
+ld r2 currentp
+mov retval r2
+jmp L113
+:L113
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun int0 pv 0
+:int0
+; gnAsg :(tick_count (+ tick_count 1 ))
+; gnAsg :(#1 (call nextp ))
+trap r0 #15
+pushm sp
+ld r1 currentp
+st r31 @0 r1
+st sp @1 r1
+st fp @2 r1
+ld r2 tick_count
+add r3 r2 #1
+st r3 tick_count
+jal rads nextp
+mov r1 r28
+eq r2 r1 #0
+jf r2 L117
+trap r0 #0
+:L117
+ld r1 currentp
+ld r31 @0 r1
+ld sp @1 r1
+ld fp @2 r1
+popm sp
+reti
+:L116
+reti
+; fun sem_wait pv 1
+:sem_wait
+; gnAsg :(#2 (call wait (+ (* #1 65536 )currentp )))
+; gnAsg :(#3 currentp )
+; gnAsg :((vec #3 3 )2 )
+; gnAsg :((vec #3 5 )#1 )
+; gnAsg :((vec cell_wait_cnt #1 )(+ (vec cell_wait_cnt #1 )1 ))
+; gnAsg :(#4 (call remove_from_ready #3 ))
+; gnAsg :((vec #3 7 )ready_head )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+st r7 @7 fp
+add fp fp #8
+st rads @0 fp
+pop sp r1
+mov r5 #0
+trap r5 #15
+mul r5 r1 #65536
+ld r7 currentp
+add r6 r5 r7
+trap r6 #21
+mov r2 r28
+eq r5 r2 #1
+jf r5 L119
+ld r3 currentp
+mov r5 #2
+mov r6 #3
+st r5 +r3 r6
+mov r5 #5
+st r1 +r3 r5
+ld r5 @cell_wait_cnt r1
+add r6 r5 #1
+st r6 @cell_wait_cnt r1
+push sp r3
+jal rads remove_from_ready
+mov r4 r28
+ld r5 ready_head
+mov r6 #7
+st r5 +r3 r6
+mov r5 #0
+trap r5 #16
+int #0
+jmp L120
+:L119
+mov r5 #0
+trap r5 #16
+:L120
+:L118
+ld rads @0 fp
+sub fp fp #8
+ld r7 @7 fp
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun sem_signal pv 1
+:sem_signal
+; gnAsg :(#2 (call signal #1 ))
+; gnAsg :((vec cell_wait_cnt #1 )(- (vec cell_wait_cnt #1 )1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r1
+mov r3 #0
+trap r3 #15
+trap r1 #22
+mov r2 r28
+ne r3 r2 #0
+jf r3 L122
+ld r3 @cell_wait_cnt r1
+sub r4 r3 #1
+st r4 @cell_wait_cnt r1
+push sp r2
+jal rads enqueue
+:L122
+mov r3 #0
+trap r3 #16
+:L121
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun terminate_task pv 0
+:terminate_task
+; gnAsg :(#1 currentp )
+; gnAsg :((vec #1 3 )0 )
+; gnAsg :((vec #1 7 )ready_head )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r2 #0
+trap r2 #15
+ld r1 currentp
+mov r2 #0
+mov r3 #3
+st r2 +r1 r3
+push sp r1
+jal rads remove_from_ready
+ld r2 ready_head
+mov r3 #7
+st r2 +r1 r3
+mov r2 #0
+trap r2 #16
+int #0
+:L123
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun init_editor pv 0
+:init_editor
+; gnAsg :((vec cell_sem 0 )0 )
+; gnAsg :((vec cell_sem 1 )1 )
+; gnAsg :((vec cell_owner 0 )(- 0 1 ))
+; gnAsg :((vec cell_owner 1 )(- 0 1 ))
+; gnAsg :((vec cell_rev 0 )0 )
+; gnAsg :((vec cell_rev 1 )0 )
+; gnAsg :((vec cell_wait_cnt 0 )0 )
+; gnAsg :((vec cell_wait_cnt 1 )0 )
+; gnAsg :(snapshot_count 0 )
+; gnAsg :(#1 0 )
+; gnAsg :((vec cell0 #1 )46 )
+; gnAsg :((vec cell1 #1 )46 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r2 #0
+mov r3 #0
+st r2 @cell_sem r3
+mov r2 #1
+mov r3 #1
+st r2 @cell_sem r3
+mov r2 #0
+mul r3 r2 #256
+add r2 r3 #1
+trap r2 #20
+mov r2 #1
+mul r3 r2 #256
+add r2 r3 #1
+trap r2 #20
+mov r2 #0
+sub r3 r2 #1
+mov r2 #0
+st r3 @cell_owner r2
+mov r2 #0
+sub r3 r2 #1
+mov r2 #1
+st r3 @cell_owner r2
+mov r2 #0
+mov r3 #0
+st r2 @cell_rev r3
+mov r2 #0
+mov r3 #1
+st r2 @cell_rev r3
+mov r2 #0
+mov r3 #0
+st r2 @cell_wait_cnt r3
+mov r2 #0
+mov r3 #1
+st r2 @cell_wait_cnt r3
+mov r2 #0
+st r2 snapshot_count
+mov r1 #0
+jmp L125
+:L126
+mov r2 #46
+st r2 @cell0 r1
+mov r2 #46
+st r2 @cell1 r1
+add r1 r1 #1
+:L125
+lt r2 r1 #16
+jt r2 L126
+:L124
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun stage_text_word_by_word pv 9
+:stage_text_word_by_word
+; gnAsg :((vec edit_buf (+ #1 0 ))#2 )
+; gnAsg :((vec edit_buf (+ #1 1 ))#3 )
+; gnAsg :((vec edit_buf (+ #1 2 ))#4 )
+; gnAsg :((vec edit_buf (+ #1 3 ))#5 )
+; gnAsg :((vec edit_buf (+ #1 4 ))#6 )
+; gnAsg :((vec edit_buf (+ #1 5 ))#7 )
+; gnAsg :((vec edit_buf (+ #1 6 ))#8 )
+; gnAsg :((vec edit_buf (+ #1 7 ))#9 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+st r7 @7 fp
+st r8 @8 fp
+st r9 @9 fp
+st r10 @10 fp
+add fp fp #11
+st rads @0 fp
+pop sp r9
+pop sp r8
+pop sp r7
+pop sp r6
+pop sp r5
+pop sp r4
+pop sp r3
+pop sp r2
+pop sp r1
+add r10 r1 #0
+st r2 @edit_buf r10
+add r10 r1 #1
+st r3 @edit_buf r10
+add r10 r1 #2
+st r4 @edit_buf r10
+add r10 r1 #3
+st r5 @edit_buf r10
+add r10 r1 #4
+st r6 @edit_buf r10
+add r10 r1 #5
+st r7 @edit_buf r10
+add r10 r1 #6
+st r8 @edit_buf r10
+add r10 r1 #7
+st r9 @edit_buf r10
+:L127
+ld rads @0 fp
+sub fp fp #11
+ld r10 @10 fp
+ld r9 @9 fp
+ld r8 @8 fp
+ld r7 @7 fp
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun write_document_cell pv 3
+:write_document_cell
+; gnAsg :(#4 (vec cell_sem #1 ))
+; gnAsg :((vec cell_owner #1 )#2 )
+; gnAsg :(#5 0 )
+; gnAsg :(#6 (vec edit_buf (+ #3 #5 )))
+; gnAsg :((vec cell0 #5 )#6 )
+; gnAsg :((vec cell1 #5 )#6 )
+; gnAsg :(#7 0 )
+; gnAsg :((vec cell_rev #1 )(+ (vec cell_rev #1 )1 ))
+; gnAsg :((vec cell_owner #1 )(- 0 1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+st r7 @7 fp
+st r8 @8 fp
+st r9 @9 fp
+add fp fp #10
+st rads @0 fp
+pop sp r3
+pop sp r2
+pop sp r1
+ld r8 @cell_sem r1
+mov r4 r8
+push sp r4
+jal rads sem_wait
+st r2 @cell_owner r1
+mov r5 #0
+jmp L129
+:L130
+add r9 r3 r5
+ld r8 @edit_buf r9
+mov r6 r8
+eq r8 r1 #0
+jf r8 L131
+st r6 @cell0 r5
+jmp L132
+:L131
+st r6 @cell1 r5
+:L132
+mov r7 #0
+jmp L133
+:L134
+add r7 r7 #1
+:L133
+lt r8 r7 #4
+jt r8 L134
+add r5 r5 #1
+:L129
+lt r8 r5 #16
+jt r8 L130
+ld r8 @cell_rev r1
+add r9 r8 #1
+st r9 @cell_rev r1
+mov r8 #0
+sub r9 r8 #1
+st r9 @cell_owner r1
+push sp r4
+jal rads sem_signal
+:L128
+ld rads @0 fp
+sub fp fp #10
+ld r9 @9 fp
+ld r8 @8 fp
+ld r7 @7 fp
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun task0 pv 0
+:task0
+; gnAsg :(#1 0 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #0
+jmp L136
+:L137
+mov r2 #0
+push sp r2
+mov r2 #87
+push sp r2
+mov r2 #82
+push sp r2
+mov r2 #73
+push sp r2
+mov r2 #84
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #82
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #48
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #8
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #67
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #76
+push sp r2
+mov r2 #76
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #48
+push sp r2
+mov r2 #33
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #0
+push sp r2
+mov r2 #0
+push sp r2
+mov r2 #0
+push sp r2
+jal rads write_document_cell
+mov r2 #0
+push sp r2
+mov r2 #84
+push sp r2
+mov r2 #48
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #67
+push sp r2
+mov r2 #79
+push sp r2
+mov r2 #76
+push sp r2
+mov r2 #76
+push sp r2
+mov r2 #65
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #8
+push sp r2
+mov r2 #66
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #68
+push sp r2
+mov r2 #73
+push sp r2
+mov r2 #84
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #49
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #1
+push sp r2
+mov r2 #0
+push sp r2
+mov r2 #0
+push sp r2
+jal rads write_document_cell
+add r1 r1 #1
+:L136
+lt r2 r1 #3
+jt r2 L137
+jal rads terminate_task
+:L135
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun task1 pv 0
+:task1
+; gnAsg :(#1 0 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #0
+jmp L139
+:L140
+mov r2 #16
+push sp r2
+mov r2 #87
+push sp r2
+mov r2 #82
+push sp r2
+mov r2 #73
+push sp r2
+mov r2 #84
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #82
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #49
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #24
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #83
+push sp r2
+mov r2 #72
+push sp r2
+mov r2 #65
+push sp r2
+mov r2 #82
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #68
+push sp r2
+mov r2 #33
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #0
+push sp r2
+mov r2 #1
+push sp r2
+mov r2 #16
+push sp r2
+jal rads write_document_cell
+mov r2 #16
+push sp r2
+mov r2 #84
+push sp r2
+mov r2 #49
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #85
+push sp r2
+mov r2 #80
+push sp r2
+mov r2 #68
+push sp r2
+mov r2 #65
+push sp r2
+mov r2 #84
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #24
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #68
+push sp r2
+mov r2 #95
+push sp r2
+mov r2 #67
+push sp r2
+mov r2 #69
+push sp r2
+mov r2 #76
+push sp r2
+mov r2 #76
+push sp r2
+mov r2 #49
+push sp r2
+jal rads stage_text_word_by_word
+mov r2 #1
+push sp r2
+mov r2 #1
+push sp r2
+mov r2 #16
+push sp r2
+jal rads write_document_cell
+add r1 r1 #1
+:L139
+lt r2 r1 #3
+jt r2 L140
+jal rads terminate_task
+:L138
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun print_cell_contents pv 1
+:print_cell_contents
+; gnAsg :(#2 0 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+pop sp r1
+mov r3 #91
+trap r3 #2
+mov r2 #0
+jmp L142
+:L143
+eq r3 r1 #0
+jf r3 L144
+ld r3 @cell0 r2
+trap r3 #2
+jmp L145
+:L144
+ld r3 @cell1 r2
+trap r3 #2
+:L145
+add r2 r2 #1
+:L142
+lt r3 r2 #16
+jt r3 L143
+mov r3 #93
+trap r3 #2
+:L141
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun task2_header pv 0
+:task2_header
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+mov r1 #0
+trap r1 #23
+mov r1 #2
+trap r1 #23
+mov r1 #61
+trap r1 #2
+mov r1 #61
+trap r1 #2
+mov r1 #61
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #83
+trap r1 #2
+mov r1 #50
+trap r1 #2
+mov r1 #49
+trap r1 #2
+mov r1 #47
+trap r1 #2
+mov r1 #77
+trap r1 #2
+mov r1 #79
+trap r1 #2
+mov r1 #83
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #77
+trap r1 #2
+mov r1 #85
+trap r1 #2
+mov r1 #76
+trap r1 #2
+mov r1 #84
+trap r1 #2
+mov r1 #73
+trap r1 #2
+mov r1 #84
+trap r1 #2
+mov r1 #72
+trap r1 #2
+mov r1 #82
+trap r1 #2
+mov r1 #69
+trap r1 #2
+mov r1 #65
+trap r1 #2
+mov r1 #68
+trap r1 #2
+mov r1 #69
+trap r1 #2
+mov r1 #68
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #79
+trap r1 #2
+mov r1 #78
+trap r1 #2
+mov r1 #76
+trap r1 #2
+mov r1 #73
+trap r1 #2
+mov r1 #78
+trap r1 #2
+mov r1 #69
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #68
+trap r1 #2
+mov r1 #79
+trap r1 #2
+mov r1 #67
+trap r1 #2
+mov r1 #85
+trap r1 #2
+mov r1 #77
+trap r1 #2
+mov r1 #69
+trap r1 #2
+mov r1 #78
+trap r1 #2
+mov r1 #84
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #69
+trap r1 #2
+mov r1 #68
+trap r1 #2
+mov r1 #73
+trap r1 #2
+mov r1 #84
+trap r1 #2
+mov r1 #79
+trap r1 #2
+mov r1 #82
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #61
+trap r1 #2
+mov r1 #61
+trap r1 #2
+mov r1 #61
+trap r1 #2
+mov r1 #6
+trap r1 #23
+mov r1 #5
+trap r1 #23
+mov r1 #83
+trap r1 #2
+mov r1 #99
+trap r1 #2
+mov r1 #104
+trap r1 #2
+mov r1 #101
+trap r1 #2
+mov r1 #100
+trap r1 #2
+mov r1 #117
+trap r1 #2
+mov r1 #108
+trap r1 #2
+mov r1 #101
+trap r1 #2
+mov r1 #114
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #84
+trap r1 #2
+mov r1 #105
+trap r1 #2
+mov r1 #99
+trap r1 #2
+mov r1 #107
+trap r1 #2
+mov r1 #115
+trap r1 #2
+mov r1 #58
+trap r1 #2
+mov r1 #32
+trap r1 #2
+ld r1 tick_count
+trap r1 #1
+mov r1 #32
+trap r1 #2
+mov r1 #124
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #65
+trap r1 #2
+mov r1 #99
+trap r1 #2
+mov r1 #116
+trap r1 #2
+mov r1 #105
+trap r1 #2
+mov r1 #118
+trap r1 #2
+mov r1 #101
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #84
+trap r1 #2
+mov r1 #104
+trap r1 #2
+mov r1 #114
+trap r1 #2
+mov r1 #101
+trap r1 #2
+mov r1 #97
+trap r1 #2
+mov r1 #100
+trap r1 #2
+mov r1 #115
+trap r1 #2
+mov r1 #58
+trap r1 #2
+mov r1 #32
+trap r1 #2
+ld r1 nump
+trap r1 #1
+mov r1 #32
+trap r1 #2
+mov r1 #124
+trap r1 #2
+mov r1 #32
+trap r1 #2
+mov r1 #83
+trap r1 #2
+mov r1 #110
+trap r1 #2
+mov r1 #97
+trap r1 #2
+mov r1 #112
+trap r1 #2
+mov r1 #115
+trap r1 #2
+mov r1 #104
+trap r1 #2
+mov r1 #111
+trap r1 #2
+mov r1 #116
+trap r1 #2
+mov r1 #115
+trap r1 #2
+mov r1 #58
+trap r1 #2
+mov r1 #32
+trap r1 #2
+ld r1 snapshot_count
+trap r1 #1
+mov r1 #6
+trap r1 #23
+:L146
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+; fun task2_cell_status pv 1
+:task2_cell_status
+; gnAsg :(#2 (vec cell_owner #1 ))
+; gnAsg :(#3 (vec cell_sem #1 ))
+; gnAsg :(#4 (vec cell_wait_cnt #1 ))
+; gnAsg :(#5 (vec cell_rev #1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+st r7 @7 fp
+st r8 @8 fp
+add fp fp #9
+st rads @0 fp
+pop sp r1
+ld r6 @cell_owner r1
+mov r2 r6
+ld r6 @cell_sem r1
+mov r3 r6
+ld r6 @cell_wait_cnt r1
+mov r4 r6
+ld r6 @cell_rev r1
+mov r5 r6
+mov r7 #0
+sub r8 r7 #1
+eq r6 r2 r8
+jf r6 L148
+mov r6 #3
+trap r6 #23
+eq r6 r1 #0
+jf r6 L149
+mov r6 #67
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #48
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #91
+trap r6 #2
+mov r6 #85
+trap r6 #2
+mov r6 #78
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #79
+trap r6 #2
+mov r6 #67
+trap r6 #2
+mov r6 #75
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #68
+trap r6 #2
+mov r6 #93
+trap r6 #2
+mov r6 #32
+trap r6 #2
+jmp L150
+:L149
+mov r6 #67
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #49
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #91
+trap r6 #2
+mov r6 #85
+trap r6 #2
+mov r6 #78
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #79
+trap r6 #2
+mov r6 #67
+trap r6 #2
+mov r6 #75
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #68
+trap r6 #2
+mov r6 #93
+trap r6 #2
+mov r6 #32
+trap r6 #2
+:L150
+jmp L151
+:L148
+mov r6 #4
+trap r6 #23
+eq r6 r1 #0
+jf r6 L152
+mov r6 #67
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #48
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #91
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #79
+trap r6 #2
+mov r6 #67
+trap r6 #2
+mov r6 #75
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #68
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #66
+trap r6 #2
+mov r6 #89
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #84
+trap r6 #2
+jmp L153
+:L152
+mov r6 #67
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #49
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #91
+trap r6 #2
+mov r6 #76
+trap r6 #2
+mov r6 #79
+trap r6 #2
+mov r6 #67
+trap r6 #2
+mov r6 #75
+trap r6 #2
+mov r6 #69
+trap r6 #2
+mov r6 #68
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #66
+trap r6 #2
+mov r6 #89
+trap r6 #2
+mov r6 #32
+trap r6 #2
+mov r6 #84
+trap r6 #2
+:L153
+trap r2 #1
+mov r6 #93
+trap r6 #2
+mov r6 #32
+trap r6 #2
+:L151
+mov r6 #83
+trap r6 #2
+mov r6 #101
+trap r6 #2
+mov r6 #109
+trap r6 #2
+mov r6 #72
+trap r6 #2
+mov r6 #100
+trap r6 #2
+mov r6 #108
+trap r6 #2
+mov r6 #58
+trap r6 #2
+trap r3 #1
+mov r6 #32
+trap r6 #2
+mov r6 #87
+trap r6 #2
+mov r6 #97
+trap r6 #2
+mov r6 #105
+trap r6 #2
+mov r6 #116
+trap r6 #2
+mov r6 #81
+trap r6 #2
+mov r6 #58
+trap r6 #2
+trap r4 #1
+mov r6 #32
+trap r6 #2
+mov r6 #82
+trap r6 #2
+mov r6 #101
+trap r6 #2
+mov r6 #118
+trap r6 #2
+mov r6 #58
+trap r6 #2
+trap r5 #1
+mov r6 #32
+trap r6 #2
+push sp r1
+jal rads print_cell_contents
+mov r6 #6
+trap r6 #23
+:L147
+ld rads @0 fp
+sub fp fp #9
+ld r8 @8 fp
+ld r7 @7 fp
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun task2 pv 0
+:task2
+; gnAsg :(#1 0 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #0
+jmp L155
+:L156
+mov r2 #0
+trap r2 #15
+jal rads task2_header
+mov r2 #0
+push sp r2
+jal rads task2_cell_status
+mov r2 #1
+push sp r2
+jal rads task2_cell_status
+mov r2 #1
+trap r2 #23
+mov r2 #0
+trap r2 #16
+swi
+add r1 r1 #1
+:L155
+lt r2 r1 #8
+jt r2 L156
+jal rads terminate_task
+:L154
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun task3 pv 0
+:task3
+; gnAsg :(#1 0 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #0
+jmp L158
+:L159
+mov r2 #1
+push sp r2
+mov r2 #3
+push sp r2
+mov r2 #0
+push sp r2
+jal rads write_document_cell
+add r1 r1 #1
+:L158
+lt r2 r1 #2
+jt r2 L159
+jal rads terminate_task
+:L157
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun task4 pv 0
+:task4
+; gnAsg :(#1 0 )
+; gnAsg :(#2 (call malloc 16 ))
+; gnAsg :(#3 0 )
+; gnAsg :((vec #2 #3 )(vec cell0 #3 ))
+; gnAsg :((vec audit_snapshots snapshot_count )#2 )
+; gnAsg :(snapshot_count (+ snapshot_count 1 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+add fp fp #6
+st rads @0 fp
+mov r1 #0
+jmp L161
+:L162
+mov r5 #0
+ld r4 @cell_sem r5
+push sp r4
+jal rads sem_wait
+mov r4 #16
+trap r4 #19
+mov r2 r28
+ne r4 r2 #0
+jf r4 L163
+mov r3 #0
+jmp L164
+:L165
+ld r4 @cell0 r3
+st r4 +r2 r3
+add r3 r3 #1
+:L164
+lt r4 r3 #16
+jt r4 L165
+ld r4 snapshot_count
+st r2 @audit_snapshots r4
+ld r4 snapshot_count
+add r5 r4 #1
+st r5 snapshot_count
+:L163
+mov r5 #0
+ld r4 @cell_sem r5
+push sp r4
+jal rads sem_signal
+swi
+add r1 r1 #1
+:L161
+lt r4 r1 #3
+jt r4 L162
+jal rads terminate_task
+:L160
+ld rads @0 fp
+sub fp fp #6
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun main pv 0
+:main
+; gnAsg :(p0 (call newp 0 ))
+; gnAsg :((vec p0 0 )(& task0 ))
+; gnAsg :(p1 (call newp 1 ))
+; gnAsg :((vec p1 0 )(& task1 ))
+; gnAsg :(p2 (call newp 2 ))
+; gnAsg :((vec p2 0 )(& task2 ))
+; gnAsg :(p3 (call newp 3 ))
+; gnAsg :((vec p3 0 )(& task3 ))
+; gnAsg :(p4 (call newp 4 ))
+; gnAsg :((vec p4 0 )(& task4 ))
+; gnAsg :(boot_p pcb_pool_ptr )
+; gnAsg :(pcb_pool_ptr (+ pcb_pool_ptr 8 ))
+; gnAsg :((vec boot_p 4 )99 )
+; gnAsg :((vec boot_p 7 )ready_head )
+; gnAsg :(currentp boot_p )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r1 #int0
+st r1 1000
+jal rads init_memory_zones
+jal rads init_editor
+mov sp #8000
+mov fp #8200
+mov r1 #0
+push sp r1
+jal rads newp
+st r28 p0
+mov r1 #task0
+mov r2 #0
+ld r3 p0
+st r1 +r3 r2
+ld r1 p0
+push sp r1
+jal rads enqueue
+mov r1 #1
+push sp r1
+jal rads newp
+st r28 p1
+mov r1 #task1
+mov r2 #0
+ld r3 p1
+st r1 +r3 r2
+ld r1 p1
+push sp r1
+jal rads enqueue
+mov r1 #2
+push sp r1
+jal rads newp
+st r28 p2
+mov r1 #task2
+mov r2 #0
+ld r3 p2
+st r1 +r3 r2
+ld r1 p2
+push sp r1
+jal rads enqueue
+mov r1 #3
+push sp r1
+jal rads newp
+st r28 p3
+mov r1 #task3
+mov r2 #0
+ld r3 p3
+st r1 +r3 r2
+ld r1 p3
+push sp r1
+jal rads enqueue
+mov r1 #4
+push sp r1
+jal rads newp
+st r28 p4
+mov r1 #task4
+mov r2 #0
+ld r3 p4
+st r1 +r3 r2
+ld r1 p4
+push sp r1
+jal rads enqueue
+ld r1 pcb_pool_ptr
+st r1 boot_p
+ld r1 pcb_pool_ptr
+add r2 r1 #8
+st r2 pcb_pool_ptr
+mov r1 #99
+mov r2 #4
+ld r3 boot_p
+st r1 +r3 r2
+ld r1 ready_head
+mov r2 #7
+ld r3 boot_p
+st r1 +r3 r2
+ld r1 boot_p
+st r1 currentp
+mov r1 #80
+trap r1 #13
+mov r1 #0
+trap r1 #16
+int #0
+:L166
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+.data 200
+.end

@@ -1,0 +1,36 @@
+
+// analog input
+
+// global
+lastx, ecount
+cnt1, cnt2
+flagstart
+
+#noframe
+int0()
+  x = readport(11)
+//  print(x)
+  if( x != lastx )
+      if ( x == 5 ) ecount = ecount + 1
+  lastx = x
+//  print(ecount)
+
+#noframe
+int1()
+  if( flagstart == 0 )
+    flagstart = 1
+    cnt1 = ecount
+  else
+    flagstart = 0
+    cnt2 = ecount
+    print(cnt2 - cnt1)
+
+main()
+  settimer0(200)
+  settimer1(4000)
+  ei(1)
+  flagstart = 0
+  lastx = readport(11)
+  ecount = 0
+  while(1)
+    doze()

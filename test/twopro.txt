@@ -1,0 +1,37 @@
+
+// show two concurrent processes
+
+// dummpy header
+readport(n)
+doze()
+settimer0(n)
+settimer1(n)
+ei()
+di()
+writeport(n,a1,a2)
+
+int0()
+  x = readport(13)  // clock
+//  print(x)
+  writeport(14,x,0)
+
+xaxis
+
+int1()
+  y = readport(10) / 2      // sin
+  writeport(15,xaxis,100-y)
+  xaxis = xaxis + 2
+  if( xaxis > 300 ) 
+    xaxis = 10
+     
+// empty ISR (must be present)
+int2()
+int3()
+
+main()
+  settimer0(200)
+  settimer1(100)
+  ei(1)
+  xaxis = 10
+  while( 1 )
+    doze()	// sleep and wait for int

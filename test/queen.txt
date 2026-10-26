@@ -1,0 +1,66 @@
+// 8 queen problem
+
+// Q = 8,          size of Q x Q board
+// Z = Q+1 = 9     empty
+// D = Q+Q-1 = 15  size of diagonal
+
+Q, Z, D, soln
+col[9], d45[16], d135[16], queen[9]
+
+//col[8+1], d45[15+1], d135[15+1], queen[8+1];
+//col[Q], d45[D], d135[D], queen[Q];
+
+printboard()
+  i = 0
+  while( i<Q )
+    j = 0
+    while( j<Q )
+      if(j == queen[i])
+        print("Q")
+      else
+        print("-")
+      j = j + 1
+    print("\n")
+    i = i + 1
+  i = 0
+  while( i<Q )
+    print(queen[i]," ")
+    i = i + 1
+  print("\n")
+
+find(level)
+  if ( level == Q )
+//    printboard()
+    soln = soln + 1
+  else
+    i = 0
+    while( i<Q )
+      if( (col[i] >= level) && (d45[level+i] >= level) && (d135[level + Q -1 - i] >= level) )
+        queen[level] = i
+        col[i] = level
+        d45[level+i] = level
+        d135[level + Q -1 - i] = level
+        find(level+1)
+        col[i] = Z
+        d45[level+i] = Z
+        d135[level + Q -1 - i] = Z
+      i = i + 1
+
+main()
+  Q = 8
+  D = 15
+  Z = 9
+  i = 0
+  while( i < Q )
+    col[i] = Z
+    i = i + 1
+  i = 0
+  while( i < D )
+    d45[i] = Z
+    d135[i] = Z
+    i = i + 1
+  soln = 0
+  find(0)
+  print("num of soln ",soln,"\n")
+
+

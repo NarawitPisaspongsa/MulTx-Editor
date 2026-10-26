@@ -1,0 +1,16 @@
+
+// fun call
+
+cnt
+
+#noframe
+int0()
+  cnt = cnt + 1
+
+sq(x)  
+  return x + 1
+
+main()
+  asm("add r10 r11 r12")
+  print(sq(2))
+

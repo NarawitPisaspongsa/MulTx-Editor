@@ -1,0 +1,15 @@
+
+// int test
+
+
+int2()
+  cnt = cnt+1
+  print(cnt)
+
+
+main()
+  settimer1(300)
+  ei(2)
+  cnt = 0
+  while(1)
+    doze()

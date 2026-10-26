@@ -1,0 +1,24 @@
+new s21i
+
+for teaching interrupt programming
+
+Want a single core cpu with timer-interrupt.  Modify s21i  to have many interrupt vectors.  Accept the object file from as23 which produces object of s23 (single format variation of s21).  Read object and recode it to be s22 (original three formats: L, D, X) with addition instructions: int, reti, push, pop, savr, resr, savt, rest.
+
+trap now has one argument:  trap r28 #0
+reg is in r1-field, trap number is in r3-field
+
+currently support only:  reti  
+
+trap function
+  trap r0 #0    stop
+  trap r1 #1    print int from r1
+  trap r1 #2    print char from r1
+  trap r1 #14   set interrupt interval to r1
+  trap r0 #15   disable interrupt
+  trap r0 #16   enable interrupt
+
+interrupt 
+  interrupt vector is stored in M[1000].  There is only one level interrupt. During the execution of interrupt service routine, interrupt is disable.  After return from interrupt, it is enable.  There can not be nested interrupt.  The interrupt interval can be set by "trap r1 #14". By default, it is 100 (instruction unit).
+
+
+8 nov 2016  (US election day)

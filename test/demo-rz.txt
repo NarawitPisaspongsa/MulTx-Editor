@@ -1,0 +1,18 @@
+
+// demo int in rz
+
+cnt     // global
+
+#noframe
+int0()
+  cnt = cnt + 1
+  print(cnt)
+
+main()
+  settimer0(500)
+  cnt = 0
+  while(1)
+    doze()
+  
+
+  

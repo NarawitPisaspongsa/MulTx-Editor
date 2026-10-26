@@ -1,0 +1,96 @@
+
+task switcher
+
+Assume two processes, one prints even number, another prints odd numbers. Both processes run forever (so that we don't have to worry about how to terminate a process). Here is the pseudo code:
+
+p1()
+  i = 0
+  while(1)
+    print i
+    i = i + 2
+
+p2()
+  i = 1
+  while(1)
+    print i
+    i = i + 2
+
+We want to run two processes concurrently using interrupt as task switcher. When interrupt occurs, the current process is suspend and switch to the next process. There must be a data structure to store the context of a process, which consists of: PC, SP, regs.  Assume register 0..15 are local to a process, register 16..31 will be use as global (persist between processes). Let us call this data, process control block (PCB).  Each process has one PCB.  The first slot of PCB stores a pointer to the next PCB.  
+
+PCB
+  next PCB
+  r0...r15
+
+A task switcher does:
+
+tswich()
+  get a handle on current PCB
+  get current PC 
+  save current context
+  get a handle on next PCB
+  restore next context 
+  set PC of next process
+
+The trick to save/restore PC is to transfer it to a local register, the same is done to the pointer to PCB (SP).  Then, local registers will be saved to the current PCB before switch to the next process. For example, let use r3 to save PC and r4 to save SP. Let r5 stores next PCB, r26 stores current PCB.
+
+; task switcher use r3, r4, r5
+
+:tswitch
+  mov r4 r26          ;  get current PCB
+  ld r5 @0 r26        ;  get next PCB
+  xch r3              ;  get current process PC
+  pushm r4            ;  save local regs to current PCB
+  mov r26 r5          ;  set next PCB
+  add r5 r5 #16
+  popm r5             ;  restore next PCB
+  xch r3              ;  set current PC, jump to next process
+
+Here is the full source to run two concurrent processes with a task switcher.
+
+.symbol
+  PCB1   1100
+  PCB2   1200
+
+.code 0
+;  set up
+  mov r1 #tswitch
+  st r1 1000          ; set int vec to tswitch()
+  mov r1 #PCB2
+  st r1 PCB1
+  mov r1 #PCB1
+  st r1 PCB2          ; set up PCB
+  mov r26 #PCB1       ; set current PCB
+  jmp p1              ; start p1
+
+:p1
+  mov r6 #0           ; i = 0
+:loop1
+  trap r6 #1          ; print i
+  add r6 r6 #2        ; i += 2
+  jmp loop1
+
+:p2
+  mov r6 #1           ; i = 1
+:loop2
+  trap r6 #1          ; print i
+  add r6 r6 #2        ; i += 2
+  jmp loop2
+
+:tswitch
+  mov r4 r26          ;  get current PCB
+  ld r5 @0 r26        ;  get next PCB
+  xch r3              ;  get current process PC
+  pushm r4            ;  save local regs to current PCB
+  mov r26 r5          ;  set next PCB
+  add r5 r5 #16
+  popm r5             ;  restore next PCB
+  xch r3              ;  set current PC, jump to next process
+.end
+
+
+
+
+  
+  
+
+  

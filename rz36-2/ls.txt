@@ -1,0 +1,45 @@
+.
+├── comp
+│   ├── compile.c
+│   ├── compile.h
+│   ├── gencode.c
+│   ├── lex.c
+│   ├── list.c
+│   ├── parse.c
+│   ├── parse.h
+│   ├── prtoken.c
+│   ├── rz36_bin
+│   ├── rz36_new
+│   ├── rz36.prj
+│   ├── stmt.c
+│   ├── symtab.c
+│   ├── token.c
+│   └── token.h
+├── doc
+│   ├── gen-asgn.txt
+│   ├── genbop-complex-c.txt
+│   ├── gencode-break-c.txt
+│   ├── gencode - Copy.c
+│   ├── gencode-dest.txt
+│   ├── gencode-improve.txt
+│   ├── hash-symbol-table.txt
+│   ├── pseudo-codegen.txt
+│   ├── rz36-explain.txt
+│   ├── rz36-iot-explain.txt
+│   └── rz-pointer.txt
+├── lexgen
+│   ├── LEXGEN.C
+│   ├── TOKEN.H
+│   └── Tokrz.txt
+├── ls.txt
+└── pgen-c
+    ├── gparse.c
+    ├── lex2.c
+    ├── list.c
+    ├── main.c
+    ├── pgen.h
+    ├── rz-grammar9-pure.txt
+    ├── rz-grammar9.txt
+    └── string.c
+
+5 directories, 38 files

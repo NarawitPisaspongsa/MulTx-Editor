@@ -1,0 +1,69 @@
+reader/writer problem
+
+
+with buffer size one
+
+writer produces one output, puts it in the buffer.  
+reader consumes it.
+
+
+writer
+  repeat
+    wait(empty)
+   
+      critical section
+      produce one output
+
+    signal(full)
+
+reader
+  repeat
+    wait(full)
+   
+      critical section
+      consume 
+
+    signal(empty)
+
+
+Let analyse how these two processes keep in sync.
+
+Define 
+
+wait(sem)
+  sem.value--
+  if sem.value < 0
+    put current process in the waiting list
+    block current process
+
+signal(sem)
+  sem.value++
+  if sem.value <= 0
+    get the first process in the waiting list
+    wake it up
+
+How to set up the initial value of the semaphores?
+
+Assume the initial value of 1.  When a process calls wait, value changes to 0. The second time that process calls wait again, before any call to signal, value will be -1, hence that process will be blocked.
+
+In the above configuration, the call to signal happens not by the process that calls wait, but the partner process. So, if a process calls wait for the second time before its partner calls signal, it will be blocked hence "wait" for its partner to proceed.  Therefore they can keep in sync.
+
+Let us wall through our reader/writer problem.
+
+We begin with writer.  Writer calls wait(empty), empty.value changes from 1 to 0.  It proceeds to critical section once it finishes, it calls signal(full). Assume there is no interrupt occurs, then writer goes through the second round of its loop and calls wait(empty) again.  This time, writer will be blocked and put into empty.wait list. Reader will start and calls wait(full) which it will pass through and goes into its critical section. After it finishes, reader will calls signal(empty), hence release writer from the waiting list.  Writer is not yet active because reader is still occupied the processor (in single core configuration).
+
+The second time reader calls wait(full), because writer has not been active yet, writer does not reach signal(full) yet, therefore reader will be blocked.
+
+With this symmetry, reader/writer will work in sync.  Writer produces one output and goes through the loop, once it reaches wait(empty) again, it will be blocked.  Reader consumes the output then calls signal(empty) hence release writer from the waiting state ready to be active again.
+
+Vice versa for the semaphore "full".  Let us turn around and focus on what happen to this semaphore.  Because we start writer first (as it should be).  Writer will reach signal(full) before reader calls wait(full).  We need to set full.value initially to 0 (instead of 1). So, when the writer calls signal(full) the first time, full.value changes from 0 to 1.  When reader starts and calls wait(full) for the first time, it will pass through (full.value changes from 1 to 0).  The second time reader calls wait(full) (before writer calls signal(full)) reader will be blocked.  
+
+So, the symmetry is complete.
+
+Setting empty.value initially to 1 and full.value initially to 0 are correct as writer starts before reader and it calls signal(full) before reader calls wait(full).
+
+last update 27 Feb 2017
+
+
+
+

@@ -1,0 +1,40 @@
+
+iot-rz explain
+
+sim21  trap functions
+
+0  stop
+1  print int
+2  print char
+3  print string (array of char, terminate by 0)
+4  input returns address of string (default at 15000)
+
+13  settimer0   (iot board)
+14  settimer1   (iot board)
+15  disable int
+16  enable int
+17  sleep and wait for int
+18  readport (iot board)
+19  malloc
+
+Rz has the following reserve words
+
+asm(s)     // insert assembly string into asm source
+print()    // print int and constant string "..."
+printc(c)  // print char
+prints(s)  // print string
+settimer0(t)   
+settimer1(t)
+di(n)      //  diable int n
+ei(n)      //  enable int n
+doze()     //  sleep wait int
+x = readport(k)  // read iot-board ports
+x = input()   // input returns string
+
+extended S21 instructions
+
+pushm sp     ;  push multiple reg, r0..r15 to stack
+popm sp      ;  pop multiple reg, r15..r0 from stack
+swap r1      ;  swap r1 and RetAds
+
+3 Feb 2017

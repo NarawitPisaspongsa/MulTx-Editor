@@ -1,0 +1,84 @@
+.symbol
+ fp 30
+ sp 29
+ retval 28
+ rads 27
+ gc 1100
+ tc 1101
+ timer 1102
+.code 0
+ mov fp #3500
+ mov sp #3000
+ jal rads main
+ trap r0 #0
+; fun int0 pv 0
+:int0
+; gnAsg :(gc (+ gc 1 ))
+; gnAsg :(tc (+ tc 1 ))
+ld r1 gc
+add r2 r1 #1
+st r2 gc
+ld r1 timer
+jf r1 L102
+ld r1 tc
+add r2 r1 #1
+st r2 tc
+:L102
+ld r1 gc
+trap r1 #1
+ld r1 tc
+trap r1 #1
+:L101
+reti
+; fun int1 pv 0
+:int1
+; gnAsg :(timer 0 )
+; gnAsg :(timer 1 )
+ld r1 timer
+jf r1 L104
+mov r1 #0
+st r1 timer
+jmp L105
+:L104
+mov r1 #1
+st r1 timer
+:L105
+:L103
+reti
+; fun main pv 0
+:main
+; gnAsg :(gc 0 )
+; gnAsg :(tc 0 )
+; gnAsg :(timer 0 )
+st r1 @1 fp
+add fp fp #2
+st rads @0 fp
+mov r1 #int0
+st r1 1000
+mov r1 #int1
+st r1 1001
+mov r1 #100
+trap r1 #13
+mov r1 #400
+trap r1 #14
+mov r1 #0
+st r1 gc
+mov r1 #0
+st r1 tc
+mov r1 #0
+st r1 timer
+mov r1 #1
+trap r1 #16
+jmp L107
+:L108
+swi
+:L107
+mov r1 #1
+jt r1 L108
+:L106
+ld rads @0 fp
+sub fp fp #2
+ld r1 @1 fp
+ret rads
+.data 200
+.end

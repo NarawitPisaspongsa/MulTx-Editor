@@ -1,0 +1,37 @@
+// counting event
+
+// global
+ecount, flagstart, lastx
+cnt1, cnt2
+
+//  toggle start/stop
+#noframe
+int1()
+  if (flagstart == 0) 
+     flagstart = 1 
+     cnt1 = ecount
+  else 
+     flagstart = 0
+     cnt2 = ecount
+     print(cnt2-cnt1)
+
+//  sampling input
+#noframe
+int0()
+  x = readport(11)
+  print(x)
+  print(ecount)
+  if (lastx != x) 
+    if (x != 0)  
+       ecount = ecount + 1
+  lastx = x        // update lastx
+
+main()
+  settimer0(200)
+  settimer1(4000)
+  ei(1)
+  flagstart = 0
+  ecount = 0
+  lastx = readport(11)
+  while(1)
+    doze()

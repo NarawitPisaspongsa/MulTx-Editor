@@ -1,0 +1,37 @@
+.symbol
+ fp 30
+ sp 29
+ retval 28
+ rads 27
+ ax 1100
+.code 0
+ mov fp #3500
+ mov sp #3000
+ jal rads main
+ trap r0 #0
+; fun main pv 0
+:main
+; gnAsg :(#1 (vec ax 0 ))
+; gnAsg :(#2 1 )
+; gnAsg :(#1 (vec ax #2 ))
+mov r4 #0
+ld r3 @ax r4
+mov r1 r3
+mov r2 #1
+jmp L102
+:L103
+ld r3 @ax r2
+gt r4 r3 r1
+jf r4 L104
+ld r3 @ax r2
+mov r1 r3
+:L104
+add r2 r2 #1
+:L102
+lt r3 r2 #20
+jt r3 L103
+trap r1 #1
+:L101
+ret rads
+.data 200
+.end

@@ -1,0 +1,47 @@
+;  demo two concurrent processes using a task switcher
+;    8 Oct 2017
+
+.symbol
+  PCB1   1100
+  PCB2   1200
+
+.code 0
+;  set up
+  mov r1 #tswitch
+  st r1 1000          ; set int vec to tswitch()
+  mov r1 #PCB2
+  st r1 PCB1
+  mov r1 #PCB1
+  st r1 PCB2          ; set up PCB
+  mov r1 #p2 
+  mov r2 #PCB2         
+  st r1 @4 r2         ; set PC of p2
+  mov r27 #PCB1       ; set current PCB
+  mov r1 #50
+  trap r1 #13         ; set timer0 = 50
+  jmp p1              ; start p1
+
+:p1
+  mov r6 #0           ; i = 0
+:loop1
+  trap r6 #1          ; print i
+  add r6 r6 #2        ; i += 2
+  jmp loop1
+
+:p2
+  mov r6 #1           ; i = 1
+:loop2
+  trap r6 #1          ; print i
+  add r6 r6 #2        ; i += 2
+  jmp loop2
+
+:tswitch
+  mov r4 r27          ;  get current PCB
+  ld r27 @0 r27       ;  get next PCB
+  xch r3              ;  get current process PC
+  pushm r4            ;  save local regs to current PCB
+  add r27 r27 #16
+  popm r27            ;  restore next PCB
+  xch r3              ;  set current PC, jump to next process
+  reti
+.end

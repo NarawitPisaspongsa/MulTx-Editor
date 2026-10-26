@@ -1,0 +1,52 @@
+.symbol
+ fp 30
+ sp 29
+ retval 28
+ rads 27
+ g 1100
+ ar 1101
+.code 0
+ mov fp #3500
+ mov sp #3000
+ jal rads main
+ trap r0 #0
+; fun main pv 0 fs 3
+:main
+; gnAsg :(g (call input ))
+; gnAsg :(#1 (vec g 0 ))
+; gnAsg :(#2 (vec ar 1 ))
+; gnAsg :(#3 11 )
+; gnAsg :(#1 (vec #3 0 ))
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+add fp fp #7
+st rads @0 fp
+trap r0 #4
+st r28 g
+mov r5 #0
+ld r6 g
+ld r4 +r6 r5
+mov r1 r4
+mov r5 #1
+ld r4 @ar r5
+mov r2 r4
+mov r3 #11
+mov r5 #0
+ld r4 +r3 r5
+mov r1 r4
+:L101
+ld rads @0 fp
+sub fp fp #7
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+.data 200
+.end

@@ -1,0 +1,47 @@
+
+interrupt programming (s2)
+
+IOT board i/o and interrupt
+
+input ports
+
+10   analog wave  sine ware period 1000, amplitude 50
+11   digital wave square wave period 1000, amplitude 5
+12   random number  (uniform 100..500)
+13   master clock (integer)
+
+interrupt
+
+0    timer0
+1    timer1
+2    event trigger
+3    no connection
+
+
+trap function
+
+trap r0 #0    stop
+trap r1 #1    print int from r1
+trap r1 #2    print char from r1
+trap r1 #3    print string (array of char, terminate by 0)
+trap r1 #4    input returns address of string (default at 15000)
+
+trap r0 #13    set timer0
+trap r0 #14    set timer1
+trap r0 #15    disable interrupt (0,1,2,3)
+trap r0 #16    enable interrupt (0,1,2,3)
+trap r0 #18    readport (10,11,12,13)
+trap r0 #19    malloc
+
+processor s2.1  extended instruction for interrupt
+
+pushm sp  xop 26  push multiple r0..r15 to stack
+popm sp   xop 27  pop multiple r0..r15 from stack
+xch r1    xop 28  exchange register r1 with RetAds  
+swi       xop 29  sleep and wait for interrupt (any int.)
+
+
+30 Sept 2017
+
+
+

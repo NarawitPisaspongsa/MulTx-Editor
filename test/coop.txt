@@ -1,0 +1,68 @@
+
+;  cooperative process
+;     demo  two co-operative processes
+
+.symbol
+  continuationA    1100
+  continuationB    1101
+  rads             27
+
+.code 0
+:main
+  mov r1 #0
+  trap r1 #15            ; di(0)
+  mov r1 #A
+  st r1 continuationA    ; initially at beginning of A
+  mov r1 #B
+  st r1 continuationB    ; initially at beginning of B
+  jmp A                  ; start co-routine
+
+:saveConA
+  add r0 rads #2
+  st r0 continuationA
+  ret rads
+
+:saveConB
+  add r0 rads #2
+  st r0 continuationB
+  ret rads
+
+:A
+  mov r1 #1
+  trap r1 #1             ; print 1
+  ; co-call B
+  jal rads saveConA
+  ld rads continuationB
+  ret rads
+  mov r1 #2              ; print 2
+  trap r1 #1
+  ; co-call B
+  jal rads saveConA
+  ld rads continuationB
+  ret rads
+  mov r1 #3      
+  trap r1 #1             ; print 3
+  ; co-call B
+  jal rads saveConA
+  ld rads continuationB
+  ret rads
+  
+:B
+  mov r2 #97
+  trap r2 #2             ; print a
+  ; co-call A
+  jal rads saveConB
+  ld rads continuationA
+  ret rads
+  mov r2 #98             ; print b
+  trap r2 #2
+  ; co-call A
+  jal rads saveConB
+  ld rads continuationA
+  ret rads
+  mov r1 #99      
+  trap r1 #2             ; print c
+  trap r0 #0		 ; stop
+
+.data 200
+.end

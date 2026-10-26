@@ -1,0 +1,13 @@
+gv
+
+fn1(x)
+  print(x)
+  y = 33
+
+main()
+  a = 1
+  gv = 2
+  b = a + a
+  b = gv
+  if( a == b ) a = 10
+  fn1(2)

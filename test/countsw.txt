@@ -1,0 +1,46 @@
+; simple task switcher
+
+.symbol
+	stop 	0
+	cnt1  	100
+        cnt2    101
+	stack 	2000
+	sp   	29
+
+.code 0
+:main
+	mov r1 #tswitch
+	st r1 1000     ; set up int vector
+	mov sp #stack  ; set stack
+	mov r1 #0
+	st r1 cnt1      ; cnt = 0
+        st r1 cnt2
+	jmp count1
+
+:count1
+:loop			; count to 10
+	ld r1 cnt1
+	add r1 r1 #2
+	st r1 cnt1
+	eq r2 r1 #100
+	jf r2 loop
+	trap r0 #stop
+
+:count2
+:loop2
+        ld r1 cnt2
+        add r1 r1 #2
+        st r1 cnt2
+        lt r2 r1 #100
+        jf r2 loop2
+        trap r0 #stop
+
+;  an ISR
+:tswitch	     ; use r3 for ret-ads
+	xch  r3      ; save current process PC to r3
+	pushm sp
+;	mov sp #next  ; pointer to data of next process
+	popm sp
+	xch   r3     ; restore next process PC to return-address
+	reti
+.end

@@ -1,0 +1,1690 @@
+                        .symbol
+                         fp 30
+                         sp 29
+                         retval 28
+                         rads 27
+                         currentp 1100
+                         nump 1101
+                         ready_head 1102
+                         ready_tail 1103
+                         free_node_ptr 1104
+                         pcb_pool_ptr 1105
+                         tick_count 1106
+                         stack_bases 1107
+                         frame_bases 1112
+                         task_pids 1117
+                         cell0 1122
+                         cell1 1138
+                         edit_buf 1154
+                         cell_sem 1186
+                         cell_owner 1188
+                         cell_rev 1190
+                         cell_wait_cnt 1192
+                         audit_snapshots 1194
+                         snapshot_count 1202
+                         p0 1203
+                         p1 1204
+                         p2 1205
+                         p3 1206
+                         p4 1207
+                         boot_p 1208
+                        .code 0
+   0 L 5 30 3500         mov fp #3500
+   1 L 5 29 3000         mov sp #3000
+   2 L 7 27 1334         jal rads main
+   3 X 31 0 0 0 20       trap r0 #0
+                        ; fun init_memory_zones pv 0
+                        :init_memory_zones
+                        ; gnAsg :((vec stack_bases 0 )3000 )
+                        ; gnAsg :((vec frame_bases 0 )3400 )
+                        ; gnAsg :((vec stack_bases 1 )4000 )
+                        ; gnAsg :((vec frame_bases 1 )4400 )
+                        ; gnAsg :((vec stack_bases 2 )5000 )
+                        ; gnAsg :((vec frame_bases 2 )5400 )
+                        ; gnAsg :((vec stack_bases 3 )6000 )
+                        ; gnAsg :((vec frame_bases 3 )6400 )
+                        ; gnAsg :((vec stack_bases 4 )7000 )
+                        ; gnAsg :((vec frame_bases 4 )7400 )
+                        ; gnAsg :(pcb_pool_ptr 2100 )
+                        ; gnAsg :(nump 0 )
+                        ; gnAsg :(ready_head 0 )
+                        ; gnAsg :(ready_tail 0 )
+                        ; gnAsg :(tick_count 0 )
+   4 D 4 1 30 1         st r1 @1 fp
+   5 D 4 2 30 2         st r2 @2 fp
+   6 D 10 30 30 3       add fp fp #3
+   7 D 4 27 30 0        st rads @0 fp
+   8 L 5 1 3000         mov r1 #3000
+   9 L 5 2 0            mov r2 #0
+  10 D 4 1 2 1107       st r1 @stack_bases r2
+  11 L 5 1 3400         mov r1 #3400
+  12 L 5 2 0            mov r2 #0
+  13 D 4 1 2 1112       st r1 @frame_bases r2
+  14 L 5 1 4000         mov r1 #4000
+  15 L 5 2 1            mov r2 #1
+  16 D 4 1 2 1107       st r1 @stack_bases r2
+  17 L 5 1 4400         mov r1 #4400
+  18 L 5 2 1            mov r2 #1
+  19 D 4 1 2 1112       st r1 @frame_bases r2
+  20 L 5 1 5000         mov r1 #5000
+  21 L 5 2 2            mov r2 #2
+  22 D 4 1 2 1107       st r1 @stack_bases r2
+  23 L 5 1 5400         mov r1 #5400
+  24 L 5 2 2            mov r2 #2
+  25 D 4 1 2 1112       st r1 @frame_bases r2
+  26 L 5 1 6000         mov r1 #6000
+  27 L 5 2 3            mov r2 #3
+  28 D 4 1 2 1107       st r1 @stack_bases r2
+  29 L 5 1 6400         mov r1 #6400
+  30 L 5 2 3            mov r2 #3
+  31 D 4 1 2 1112       st r1 @frame_bases r2
+  32 L 5 1 7000         mov r1 #7000
+  33 L 5 2 4            mov r2 #4
+  34 D 4 1 2 1107       st r1 @stack_bases r2
+  35 L 5 1 7400         mov r1 #7400
+  36 L 5 2 4            mov r2 #4
+  37 D 4 1 2 1112       st r1 @frame_bases r2
+  38 L 5 1 2100         mov r1 #2100
+  39 L 3 1 1105         st r1 pcb_pool_ptr
+  40 L 5 1 0            mov r1 #0
+  41 L 3 1 1101         st r1 nump
+  42 L 5 1 0            mov r1 #0
+  43 L 3 1 1102         st r1 ready_head
+  44 L 5 1 0            mov r1 #0
+  45 L 3 1 1103         st r1 ready_tail
+  46 L 5 1 0            mov r1 #0
+  47 L 3 1 1106         st r1 tick_count
+                        :L101
+  48 D 2 27 30 0        ld rads @0 fp
+  49 D 11 30 30 3       sub fp fp #3
+  50 D 2 2 30 2         ld r2 @2 fp
+  51 D 2 1 30 1         ld r1 @1 fp
+  52 X 31 27 0 0 19     ret rads
+                        ; fun newp pv 1
+                        :newp
+                        ; gnAsg :(#2 pcb_pool_ptr )
+                        ; gnAsg :(pcb_pool_ptr (+ pcb_pool_ptr 8 ))
+                        ; gnAsg :((vec #2 0 )0 )
+                        ; gnAsg :((vec #2 1 )(vec stack_bases #1 ))
+                        ; gnAsg :((vec #2 2 )(vec frame_bases #1 ))
+                        ; gnAsg :((vec #2 3 )1 )
+                        ; gnAsg :((vec #2 4 )#1 )
+                        ; gnAsg :((vec #2 5 )(- 0 1 ))
+                        ; gnAsg :((vec #2 6 )0 )
+                        ; gnAsg :((vec #2 7 )0 )
+  53 D 4 1 30 1         st r1 @1 fp
+  54 D 4 2 30 2         st r2 @2 fp
+  55 D 4 3 30 3         st r3 @3 fp
+  56 D 4 4 30 4         st r4 @4 fp
+  57 D 10 30 30 5       add fp fp #5
+  58 D 4 27 30 0        st rads @0 fp
+  59 X 31 29 1 0 22     pop sp r1
+  60 L 1 2 1105         ld r2 pcb_pool_ptr
+  61 L 1 3 1105         ld r3 pcb_pool_ptr
+  62 D 10 4 3 8         add r4 r3 #8
+  63 L 3 4 1105         st r4 pcb_pool_ptr
+  64 L 5 3 0            mov r3 #0
+  65 L 5 4 0            mov r4 #0
+  66 X 31 3 2 4 18      st r3 +r2 r4
+  67 D 2 3 1 1107       ld r3 @stack_bases r1
+  68 L 5 4 1            mov r4 #1
+  69 X 31 3 2 4 18      st r3 +r2 r4
+  70 D 2 3 1 1112       ld r3 @frame_bases r1
+  71 L 5 4 2            mov r4 #2
+  72 X 31 3 2 4 18      st r3 +r2 r4
+  73 L 5 3 1            mov r3 #1
+  74 L 5 4 3            mov r4 #3
+  75 X 31 3 2 4 18      st r3 +r2 r4
+  76 L 5 3 4            mov r3 #4
+  77 X 31 1 2 3 18      st r1 +r2 r3
+  78 L 5 3 0            mov r3 #0
+  79 D 11 4 3 1         sub r4 r3 #1
+  80 L 5 3 5            mov r3 #5
+  81 X 31 4 2 3 18      st r4 +r2 r3
+  82 L 5 3 0            mov r3 #0
+  83 L 5 4 6            mov r4 #6
+  84 X 31 3 2 4 18      st r3 +r2 r4
+  85 L 5 3 0            mov r3 #0
+  86 L 5 4 7            mov r4 #7
+  87 X 31 3 2 4 18      st r3 +r2 r4
+  88 X 31 28 2 0 16     mov retval r2
+  89 L 6 0 90           jmp L102
+                        :L102
+  90 D 2 27 30 0        ld rads @0 fp
+  91 D 11 30 30 5       sub fp fp #5
+  92 D 2 4 30 4         ld r4 @4 fp
+  93 D 2 3 30 3         ld r3 @3 fp
+  94 D 2 2 30 2         ld r2 @2 fp
+  95 D 2 1 30 1         ld r1 @1 fp
+  96 X 31 27 0 0 19     ret rads
+                        ; fun enqueue pv 1
+                        :enqueue
+                        ; gnAsg :((vec #1 3 )1 )
+                        ; gnAsg :((vec #1 5 )(- 0 1 ))
+                        ; gnAsg :(ready_head #1 )
+                        ; gnAsg :(ready_tail #1 )
+                        ; gnAsg :((vec #1 7 )#1 )
+                        ; gnAsg :((vec ready_tail 7 )#1 )
+                        ; gnAsg :((vec #1 7 )ready_head )
+                        ; gnAsg :(ready_tail #1 )
+                        ; gnAsg :(nump (+ nump 1 ))
+  97 D 4 1 30 1         st r1 @1 fp
+  98 D 4 2 30 2         st r2 @2 fp
+  99 D 4 3 30 3         st r3 @3 fp
+ 100 D 10 30 30 4       add fp fp #4
+ 101 D 4 27 30 0        st rads @0 fp
+ 102 X 31 29 1 0 22     pop sp r1
+ 103 L 5 2 1            mov r2 #1
+ 104 L 5 3 3            mov r3 #3
+ 105 X 31 2 1 3 18      st r2 +r1 r3
+ 106 L 5 2 0            mov r2 #0
+ 107 D 11 3 2 1         sub r3 r2 #1
+ 108 L 5 2 5            mov r2 #5
+ 109 X 31 3 1 2 18      st r3 +r1 r2
+ 110 L 1 2 1102         ld r2 ready_head
+ 111 D 17 3 2 0         eq r3 r2 #0
+ 112 L 9 3 118          jf r3 L104
+ 113 L 3 1 1102         st r1 ready_head
+ 114 L 3 1 1103         st r1 ready_tail
+ 115 L 5 2 7            mov r2 #7
+ 116 X 31 1 1 2 18      st r1 +r1 r2
+ 117 L 6 0 125          jmp L105
+                        :L104
+ 118 L 5 2 7            mov r2 #7
+ 119 L 1 3 1103         ld r3 ready_tail
+ 120 X 31 1 3 2 18      st r1 +r3 r2
+ 121 L 1 2 1102         ld r2 ready_head
+ 122 L 5 3 7            mov r3 #7
+ 123 X 31 2 1 3 18      st r2 +r1 r3
+ 124 L 3 1 1103         st r1 ready_tail
+                        :L105
+ 125 L 1 2 1101         ld r2 nump
+ 126 D 10 3 2 1         add r3 r2 #1
+ 127 L 3 3 1101         st r3 nump
+                        :L103
+ 128 D 2 27 30 0        ld rads @0 fp
+ 129 D 11 30 30 4       sub fp fp #4
+ 130 D 2 3 30 3         ld r3 @3 fp
+ 131 D 2 2 30 2         ld r2 @2 fp
+ 132 D 2 1 30 1         ld r1 @1 fp
+ 133 X 31 27 0 0 19     ret rads
+                        ; fun remove_from_ready pv 1
+                        :remove_from_ready
+                        ; gnAsg :(ready_head 0 )
+                        ; gnAsg :(ready_tail 0 )
+                        ; gnAsg :(nump 0 )
+                        ; gnAsg :(#2 ready_head )
+                        ; gnAsg :(#3 (vec ready_head 7 ))
+                        ; gnAsg :(#4 0 )
+                        ; gnAsg :((vec #2 7 )(vec #3 7 ))
+                        ; gnAsg :(ready_head (vec #3 7 ))
+                        ; gnAsg :(ready_tail #2 )
+                        ; gnAsg :(nump (- nump 1 ))
+                        ; gnAsg :(#2 #3 )
+                        ; gnAsg :(#3 (vec #3 7 ))
+ 134 D 4 1 30 1         st r1 @1 fp
+ 135 D 4 2 30 2         st r2 @2 fp
+ 136 D 4 3 30 3         st r3 @3 fp
+ 137 D 4 4 30 4         st r4 @4 fp
+ 138 D 4 5 30 5         st r5 @5 fp
+ 139 D 4 6 30 6         st r6 @6 fp
+ 140 D 4 7 30 7         st r7 @7 fp
+ 141 D 10 30 30 8       add fp fp #8
+ 142 D 4 27 30 0        st rads @0 fp
+ 143 X 31 29 1 0 22     pop sp r1
+ 144 L 1 5 1101         ld r5 nump
+ 145 D 20 6 5 1         le r6 r5 #1
+ 146 L 9 6 155          jf r6 L107
+ 147 L 5 5 0            mov r5 #0
+ 148 L 3 5 1102         st r5 ready_head
+ 149 L 5 5 0            mov r5 #0
+ 150 L 3 5 1103         st r5 ready_tail
+ 151 L 5 5 0            mov r5 #0
+ 152 L 3 5 1101         st r5 nump
+ 153 L 5 28 0           mov retval #0
+ 154 L 6 0 194          jmp L106
+                        :L107
+ 155 L 1 2 1102         ld r2 ready_head
+ 156 L 5 6 7            mov r6 #7
+ 157 L 1 7 1102         ld r7 ready_head
+ 158 X 31 5 7 6 17      ld r5 +r7 r6
+ 159 X 31 3 5 0 16      mov r3 r5
+ 160 L 5 4 0            mov r4 #0
+ 161 L 6 0 188          jmp L108
+                        :L109
+ 162 X 31 5 3 1 7       eq r5 r3 r1
+ 163 L 9 5 183          jf r5 L110
+ 164 L 5 6 7            mov r6 #7
+ 165 X 31 5 3 6 17      ld r5 +r3 r6
+ 166 L 5 6 7            mov r6 #7
+ 167 X 31 5 2 6 18      st r5 +r2 r6
+ 168 L 1 6 1102         ld r6 ready_head
+ 169 X 31 5 1 6 7       eq r5 r1 r6
+ 170 L 9 5 174          jf r5 L111
+ 171 L 5 6 7            mov r6 #7
+ 172 X 31 5 3 6 17      ld r5 +r3 r6
+ 173 L 3 5 1102         st r5 ready_head
+                        :L111
+ 174 L 1 6 1103         ld r6 ready_tail
+ 175 X 31 5 1 6 7       eq r5 r1 r6
+ 176 L 9 5 178          jf r5 L112
+ 177 L 3 2 1103         st r2 ready_tail
+                        :L112
+ 178 L 1 5 1101         ld r5 nump
+ 179 D 11 6 5 1         sub r6 r5 #1
+ 180 L 3 6 1101         st r6 nump
+ 181 X 31 28 2 0 16     mov retval r2
+ 182 L 6 0 194          jmp L106
+                        :L110
+ 183 X 31 2 3 0 16      mov r2 r3
+ 184 L 5 6 7            mov r6 #7
+ 185 X 31 5 3 6 17      ld r5 +r3 r6
+ 186 X 31 3 5 0 16      mov r3 r5
+ 187 D 10 4 4 1         add r4 r4 #1
+                        :L108
+ 188 L 1 6 1101         ld r6 nump
+ 189 X 31 5 4 6 9       lt r5 r4 r6
+ 190 L 8 5 162          jt r5 L109
+ 191 L 1 5 1100         ld r5 currentp
+ 192 X 31 28 5 0 16     mov retval r5
+ 193 L 6 0 194          jmp L106
+                        :L106
+ 194 D 2 27 30 0        ld rads @0 fp
+ 195 D 11 30 30 8       sub fp fp #8
+ 196 D 2 7 30 7         ld r7 @7 fp
+ 197 D 2 6 30 6         ld r6 @6 fp
+ 198 D 2 5 30 5         ld r5 @5 fp
+ 199 D 2 4 30 4         ld r4 @4 fp
+ 200 D 2 3 30 3         ld r3 @3 fp
+ 201 D 2 2 30 2         ld r2 @2 fp
+ 202 D 2 1 30 1         ld r1 @1 fp
+ 203 X 31 27 0 0 19     ret rads
+                        ; fun nextp pv 0
+                        :nextp
+                        ; gnAsg :(#1 (vec currentp 7 ))
+                        ; gnAsg :(#1 ready_head )
+                        ; gnAsg :(currentp #1 )
+                        ; gnAsg :((vec currentp 6 )(+ (vec currentp 6 )1 ))
+ 204 D 4 1 30 1         st r1 @1 fp
+ 205 D 4 2 30 2         st r2 @2 fp
+ 206 D 4 3 30 3         st r3 @3 fp
+ 207 D 4 4 30 4         st r4 @4 fp
+ 208 D 10 30 30 5       add fp fp #5
+ 209 D 4 27 30 0        st rads @0 fp
+ 210 L 1 2 1101         ld r2 nump
+ 211 D 17 3 2 0         eq r3 r2 #0
+ 212 L 9 3 215          jf r3 L114
+ 213 L 5 28 0           mov retval #0
+ 214 L 6 0 233          jmp L113
+                        :L114
+ 215 L 5 3 7            mov r3 #7
+ 216 L 1 4 1100         ld r4 currentp
+ 217 X 31 2 4 3 17      ld r2 +r4 r3
+ 218 X 31 1 2 0 16      mov r1 r2
+ 219 D 17 2 1 0         eq r2 r1 #0
+ 220 L 9 2 222          jf r2 L115
+ 221 L 1 1 1102         ld r1 ready_head
+                        :L115
+ 222 L 3 1 1100         st r1 currentp
+ 223 L 5 3 6            mov r3 #6
+ 224 L 1 4 1100         ld r4 currentp
+ 225 X 31 2 4 3 17      ld r2 +r4 r3
+ 226 D 10 3 2 1         add r3 r2 #1
+ 227 L 5 2 6            mov r2 #6
+ 228 L 1 4 1100         ld r4 currentp
+ 229 X 31 3 4 2 18      st r3 +r4 r2
+ 230 L 1 2 1100         ld r2 currentp
+ 231 X 31 28 2 0 16     mov retval r2
+ 232 L 6 0 233          jmp L113
+                        :L113
+ 233 D 2 27 30 0        ld rads @0 fp
+ 234 D 11 30 30 5       sub fp fp #5
+ 235 D 2 4 30 4         ld r4 @4 fp
+ 236 D 2 3 30 3         ld r3 @3 fp
+ 237 D 2 2 30 2         ld r2 @2 fp
+ 238 D 2 1 30 1         ld r1 @1 fp
+ 239 X 31 27 0 0 19     ret rads
+                        ; fun int0 pv 0
+                        :int0
+                        ; gnAsg :(tick_count (+ tick_count 1 ))
+                        ; gnAsg :(#1 (call nextp ))
+ 240 X 31 0 15 0 20     trap r0 #15
+ 241 X 31 29 0 0 26     pushm sp
+ 242 L 1 1 1100         ld r1 currentp
+ 243 D 4 31 1 0         st r31 @0 r1
+ 244 D 4 29 1 1         st sp @1 r1
+ 245 D 4 30 1 2         st fp @2 r1
+ 246 L 1 2 1106         ld r2 tick_count
+ 247 D 10 3 2 1         add r3 r2 #1
+ 248 L 3 3 1106         st r3 tick_count
+ 249 L 7 27 204         jal rads nextp
+ 250 X 31 1 28 0 16     mov r1 r28
+ 251 D 17 2 1 0         eq r2 r1 #0
+ 252 L 9 2 254          jf r2 L117
+ 253 X 31 0 0 0 20      trap r0 #0
+                        :L117
+ 254 L 1 1 1100         ld r1 currentp
+ 255 D 2 31 1 0         ld r31 @0 r1
+ 256 D 2 29 1 1         ld sp @1 r1
+ 257 D 2 30 1 2         ld fp @2 r1
+ 258 X 31 29 0 0 27     popm sp
+ 259 X 31 0 0 0 25      reti
+                        :L116
+ 260 X 31 0 0 0 25      reti
+                        ; fun sem_wait pv 1
+                        :sem_wait
+                        ; gnAsg :(#2 (call wait (+ (* #1 65536 )currentp )))
+                        ; gnAsg :(#3 currentp )
+                        ; gnAsg :((vec #3 3 )2 )
+                        ; gnAsg :((vec #3 5 )#1 )
+                        ; gnAsg :((vec cell_wait_cnt #1 )(+ (vec cell_wait_cnt #1 )1 ))
+                        ; gnAsg :(#4 (call remove_from_ready #3 ))
+                        ; gnAsg :((vec #3 7 )ready_head )
+ 261 D 4 1 30 1         st r1 @1 fp
+ 262 D 4 2 30 2         st r2 @2 fp
+ 263 D 4 3 30 3         st r3 @3 fp
+ 264 D 4 4 30 4         st r4 @4 fp
+ 265 D 4 5 30 5         st r5 @5 fp
+ 266 D 4 6 30 6         st r6 @6 fp
+ 267 D 4 7 30 7         st r7 @7 fp
+ 268 D 10 30 30 8       add fp fp #8
+ 269 D 4 27 30 0        st rads @0 fp
+ 270 X 31 29 1 0 22     pop sp r1
+ 271 L 5 5 0            mov r5 #0
+ 272 X 31 5 15 0 20     trap r5 #15
+ 273 D 12 5 1 65536     mul r5 r1 #65536
+ 274 L 1 7 1100         ld r7 currentp
+ 275 X 31 6 5 7 0       add r6 r5 r7
+ 276 X 31 6 21 0 20     trap r6 #21
+ 277 X 31 2 28 0 16     mov r2 r28
+ 278 D 17 5 2 1         eq r5 r2 #1
+ 279 L 9 5 299          jf r5 L119
+ 280 L 1 3 1100         ld r3 currentp
+ 281 L 5 5 2            mov r5 #2
+ 282 L 5 6 3            mov r6 #3
+ 283 X 31 5 3 6 18      st r5 +r3 r6
+ 284 L 5 5 5            mov r5 #5
+ 285 X 31 1 3 5 18      st r1 +r3 r5
+ 286 D 2 5 1 1192       ld r5 @cell_wait_cnt r1
+ 287 D 10 6 5 1         add r6 r5 #1
+ 288 D 4 6 1 1192       st r6 @cell_wait_cnt r1
+ 289 X 31 29 3 0 21     push sp r3
+ 290 L 7 27 134         jal rads remove_from_ready
+ 291 X 31 4 28 0 16     mov r4 r28
+ 292 L 1 5 1102         ld r5 ready_head
+ 293 L 5 6 7            mov r6 #7
+ 294 X 31 5 3 6 18      st r5 +r3 r6
+ 295 L 5 5 0            mov r5 #0
+ 296 X 31 5 16 0 20     trap r5 #16
+ 297 X 31 0 0 0 24      int #0
+ 298 L 6 0 301          jmp L120
+                        :L119
+ 299 L 5 5 0            mov r5 #0
+ 300 X 31 5 16 0 20     trap r5 #16
+                        :L120
+                        :L118
+ 301 D 2 27 30 0        ld rads @0 fp
+ 302 D 11 30 30 8       sub fp fp #8
+ 303 D 2 7 30 7         ld r7 @7 fp
+ 304 D 2 6 30 6         ld r6 @6 fp
+ 305 D 2 5 30 5         ld r5 @5 fp
+ 306 D 2 4 30 4         ld r4 @4 fp
+ 307 D 2 3 30 3         ld r3 @3 fp
+ 308 D 2 2 30 2         ld r2 @2 fp
+ 309 D 2 1 30 1         ld r1 @1 fp
+ 310 X 31 27 0 0 19     ret rads
+                        ; fun sem_signal pv 1
+                        :sem_signal
+                        ; gnAsg :(#2 (call signal #1 ))
+                        ; gnAsg :((vec cell_wait_cnt #1 )(- (vec cell_wait_cnt #1 )1 ))
+ 311 D 4 1 30 1         st r1 @1 fp
+ 312 D 4 2 30 2         st r2 @2 fp
+ 313 D 4 3 30 3         st r3 @3 fp
+ 314 D 4 4 30 4         st r4 @4 fp
+ 315 D 10 30 30 5       add fp fp #5
+ 316 D 4 27 30 0        st rads @0 fp
+ 317 X 31 29 1 0 22     pop sp r1
+ 318 L 5 3 0            mov r3 #0
+ 319 X 31 3 15 0 20     trap r3 #15
+ 320 X 31 1 22 0 20     trap r1 #22
+ 321 X 31 2 28 0 16     mov r2 r28
+ 322 D 18 3 2 0         ne r3 r2 #0
+ 323 L 9 3 329          jf r3 L122
+ 324 D 2 3 1 1192       ld r3 @cell_wait_cnt r1
+ 325 D 11 4 3 1         sub r4 r3 #1
+ 326 D 4 4 1 1192       st r4 @cell_wait_cnt r1
+ 327 X 31 29 2 0 21     push sp r2
+ 328 L 7 27 97          jal rads enqueue
+                        :L122
+ 329 L 5 3 0            mov r3 #0
+ 330 X 31 3 16 0 20     trap r3 #16
+                        :L121
+ 331 D 2 27 30 0        ld rads @0 fp
+ 332 D 11 30 30 5       sub fp fp #5
+ 333 D 2 4 30 4         ld r4 @4 fp
+ 334 D 2 3 30 3         ld r3 @3 fp
+ 335 D 2 2 30 2         ld r2 @2 fp
+ 336 D 2 1 30 1         ld r1 @1 fp
+ 337 X 31 27 0 0 19     ret rads
+                        ; fun terminate_task pv 0
+                        :terminate_task
+                        ; gnAsg :(#1 currentp )
+                        ; gnAsg :((vec #1 3 )0 )
+                        ; gnAsg :((vec #1 7 )ready_head )
+ 338 D 4 1 30 1         st r1 @1 fp
+ 339 D 4 2 30 2         st r2 @2 fp
+ 340 D 4 3 30 3         st r3 @3 fp
+ 341 D 10 30 30 4       add fp fp #4
+ 342 D 4 27 30 0        st rads @0 fp
+ 343 L 5 2 0            mov r2 #0
+ 344 X 31 2 15 0 20     trap r2 #15
+ 345 L 1 1 1100         ld r1 currentp
+ 346 L 5 2 0            mov r2 #0
+ 347 L 5 3 3            mov r3 #3
+ 348 X 31 2 1 3 18      st r2 +r1 r3
+ 349 X 31 29 1 0 21     push sp r1
+ 350 L 7 27 134         jal rads remove_from_ready
+ 351 L 1 2 1102         ld r2 ready_head
+ 352 L 5 3 7            mov r3 #7
+ 353 X 31 2 1 3 18      st r2 +r1 r3
+ 354 L 5 2 0            mov r2 #0
+ 355 X 31 2 16 0 20     trap r2 #16
+ 356 X 31 0 0 0 24      int #0
+                        :L123
+ 357 D 2 27 30 0        ld rads @0 fp
+ 358 D 11 30 30 4       sub fp fp #4
+ 359 D 2 3 30 3         ld r3 @3 fp
+ 360 D 2 2 30 2         ld r2 @2 fp
+ 361 D 2 1 30 1         ld r1 @1 fp
+ 362 X 31 27 0 0 19     ret rads
+                        ; fun init_editor pv 0
+                        :init_editor
+                        ; gnAsg :((vec cell_sem 0 )0 )
+                        ; gnAsg :((vec cell_sem 1 )1 )
+                        ; gnAsg :((vec cell_owner 0 )(- 0 1 ))
+                        ; gnAsg :((vec cell_owner 1 )(- 0 1 ))
+                        ; gnAsg :((vec cell_rev 0 )0 )
+                        ; gnAsg :((vec cell_rev 1 )0 )
+                        ; gnAsg :((vec cell_wait_cnt 0 )0 )
+                        ; gnAsg :((vec cell_wait_cnt 1 )0 )
+                        ; gnAsg :(snapshot_count 0 )
+                        ; gnAsg :(#1 0 )
+                        ; gnAsg :((vec cell0 #1 )46 )
+                        ; gnAsg :((vec cell1 #1 )46 )
+ 363 D 4 1 30 1         st r1 @1 fp
+ 364 D 4 2 30 2         st r2 @2 fp
+ 365 D 4 3 30 3         st r3 @3 fp
+ 366 D 10 30 30 4       add fp fp #4
+ 367 D 4 27 30 0        st rads @0 fp
+ 368 L 5 2 0            mov r2 #0
+ 369 L 5 3 0            mov r3 #0
+ 370 D 4 2 3 1186       st r2 @cell_sem r3
+ 371 L 5 2 1            mov r2 #1
+ 372 L 5 3 1            mov r3 #1
+ 373 D 4 2 3 1186       st r2 @cell_sem r3
+ 374 L 5 2 0            mov r2 #0
+ 375 D 12 3 2 256       mul r3 r2 #256
+ 376 D 10 2 3 1         add r2 r3 #1
+ 377 X 31 2 20 0 20     trap r2 #20
+ 378 L 5 2 1            mov r2 #1
+ 379 D 12 3 2 256       mul r3 r2 #256
+ 380 D 10 2 3 1         add r2 r3 #1
+ 381 X 31 2 20 0 20     trap r2 #20
+ 382 L 5 2 0            mov r2 #0
+ 383 D 11 3 2 1         sub r3 r2 #1
+ 384 L 5 2 0            mov r2 #0
+ 385 D 4 3 2 1188       st r3 @cell_owner r2
+ 386 L 5 2 0            mov r2 #0
+ 387 D 11 3 2 1         sub r3 r2 #1
+ 388 L 5 2 1            mov r2 #1
+ 389 D 4 3 2 1188       st r3 @cell_owner r2
+ 390 L 5 2 0            mov r2 #0
+ 391 L 5 3 0            mov r3 #0
+ 392 D 4 2 3 1190       st r2 @cell_rev r3
+ 393 L 5 2 0            mov r2 #0
+ 394 L 5 3 1            mov r3 #1
+ 395 D 4 2 3 1190       st r2 @cell_rev r3
+ 396 L 5 2 0            mov r2 #0
+ 397 L 5 3 0            mov r3 #0
+ 398 D 4 2 3 1192       st r2 @cell_wait_cnt r3
+ 399 L 5 2 0            mov r2 #0
+ 400 L 5 3 1            mov r3 #1
+ 401 D 4 2 3 1192       st r2 @cell_wait_cnt r3
+ 402 L 5 2 0            mov r2 #0
+ 403 L 3 2 1202         st r2 snapshot_count
+ 404 L 5 1 0            mov r1 #0
+ 405 L 6 0 411          jmp L125
+                        :L126
+ 406 L 5 2 46           mov r2 #46
+ 407 D 4 2 1 1122       st r2 @cell0 r1
+ 408 L 5 2 46           mov r2 #46
+ 409 D 4 2 1 1138       st r2 @cell1 r1
+ 410 D 10 1 1 1         add r1 r1 #1
+                        :L125
+ 411 D 19 2 1 16        lt r2 r1 #16
+ 412 L 8 2 406          jt r2 L126
+                        :L124
+ 413 D 2 27 30 0        ld rads @0 fp
+ 414 D 11 30 30 4       sub fp fp #4
+ 415 D 2 3 30 3         ld r3 @3 fp
+ 416 D 2 2 30 2         ld r2 @2 fp
+ 417 D 2 1 30 1         ld r1 @1 fp
+ 418 X 31 27 0 0 19     ret rads
+                        ; fun stage_text_word_by_word pv 9
+                        :stage_text_word_by_word
+                        ; gnAsg :((vec edit_buf (+ #1 0 ))#2 )
+                        ; gnAsg :((vec edit_buf (+ #1 1 ))#3 )
+                        ; gnAsg :((vec edit_buf (+ #1 2 ))#4 )
+                        ; gnAsg :((vec edit_buf (+ #1 3 ))#5 )
+                        ; gnAsg :((vec edit_buf (+ #1 4 ))#6 )
+                        ; gnAsg :((vec edit_buf (+ #1 5 ))#7 )
+                        ; gnAsg :((vec edit_buf (+ #1 6 ))#8 )
+                        ; gnAsg :((vec edit_buf (+ #1 7 ))#9 )
+ 419 D 4 1 30 1         st r1 @1 fp
+ 420 D 4 2 30 2         st r2 @2 fp
+ 421 D 4 3 30 3         st r3 @3 fp
+ 422 D 4 4 30 4         st r4 @4 fp
+ 423 D 4 5 30 5         st r5 @5 fp
+ 424 D 4 6 30 6         st r6 @6 fp
+ 425 D 4 7 30 7         st r7 @7 fp
+ 426 D 4 8 30 8         st r8 @8 fp
+ 427 D 4 9 30 9         st r9 @9 fp
+ 428 D 4 10 30 10       st r10 @10 fp
+ 429 D 10 30 30 11      add fp fp #11
+ 430 D 4 27 30 0        st rads @0 fp
+ 431 X 31 29 9 0 22     pop sp r9
+ 432 X 31 29 8 0 22     pop sp r8
+ 433 X 31 29 7 0 22     pop sp r7
+ 434 X 31 29 6 0 22     pop sp r6
+ 435 X 31 29 5 0 22     pop sp r5
+ 436 X 31 29 4 0 22     pop sp r4
+ 437 X 31 29 3 0 22     pop sp r3
+ 438 X 31 29 2 0 22     pop sp r2
+ 439 X 31 29 1 0 22     pop sp r1
+ 440 D 10 10 1 0        add r10 r1 #0
+ 441 D 4 2 10 1154      st r2 @edit_buf r10
+ 442 D 10 10 1 1        add r10 r1 #1
+ 443 D 4 3 10 1154      st r3 @edit_buf r10
+ 444 D 10 10 1 2        add r10 r1 #2
+ 445 D 4 4 10 1154      st r4 @edit_buf r10
+ 446 D 10 10 1 3        add r10 r1 #3
+ 447 D 4 5 10 1154      st r5 @edit_buf r10
+ 448 D 10 10 1 4        add r10 r1 #4
+ 449 D 4 6 10 1154      st r6 @edit_buf r10
+ 450 D 10 10 1 5        add r10 r1 #5
+ 451 D 4 7 10 1154      st r7 @edit_buf r10
+ 452 D 10 10 1 6        add r10 r1 #6
+ 453 D 4 8 10 1154      st r8 @edit_buf r10
+ 454 D 10 10 1 7        add r10 r1 #7
+ 455 D 4 9 10 1154      st r9 @edit_buf r10
+                        :L127
+ 456 D 2 27 30 0        ld rads @0 fp
+ 457 D 11 30 30 11      sub fp fp #11
+ 458 D 2 10 30 10       ld r10 @10 fp
+ 459 D 2 9 30 9         ld r9 @9 fp
+ 460 D 2 8 30 8         ld r8 @8 fp
+ 461 D 2 7 30 7         ld r7 @7 fp
+ 462 D 2 6 30 6         ld r6 @6 fp
+ 463 D 2 5 30 5         ld r5 @5 fp
+ 464 D 2 4 30 4         ld r4 @4 fp
+ 465 D 2 3 30 3         ld r3 @3 fp
+ 466 D 2 2 30 2         ld r2 @2 fp
+ 467 D 2 1 30 1         ld r1 @1 fp
+ 468 X 31 27 0 0 19     ret rads
+                        ; fun write_document_cell pv 3
+                        :write_document_cell
+                        ; gnAsg :(#4 (vec cell_sem #1 ))
+                        ; gnAsg :((vec cell_owner #1 )#2 )
+                        ; gnAsg :(#5 0 )
+                        ; gnAsg :(#6 (vec edit_buf (+ #3 #5 )))
+                        ; gnAsg :((vec cell0 #5 )#6 )
+                        ; gnAsg :((vec cell1 #5 )#6 )
+                        ; gnAsg :(#7 0 )
+                        ; gnAsg :((vec cell_rev #1 )(+ (vec cell_rev #1 )1 ))
+                        ; gnAsg :((vec cell_owner #1 )(- 0 1 ))
+ 469 D 4 1 30 1         st r1 @1 fp
+ 470 D 4 2 30 2         st r2 @2 fp
+ 471 D 4 3 30 3         st r3 @3 fp
+ 472 D 4 4 30 4         st r4 @4 fp
+ 473 D 4 5 30 5         st r5 @5 fp
+ 474 D 4 6 30 6         st r6 @6 fp
+ 475 D 4 7 30 7         st r7 @7 fp
+ 476 D 4 8 30 8         st r8 @8 fp
+ 477 D 4 9 30 9         st r9 @9 fp
+ 478 D 10 30 30 10      add fp fp #10
+ 479 D 4 27 30 0        st rads @0 fp
+ 480 X 31 29 3 0 22     pop sp r3
+ 481 X 31 29 2 0 22     pop sp r2
+ 482 X 31 29 1 0 22     pop sp r1
+ 483 D 2 8 1 1186       ld r8 @cell_sem r1
+ 484 X 31 4 8 0 16      mov r4 r8
+ 485 X 31 29 4 0 21     push sp r4
+ 486 L 7 27 261         jal rads sem_wait
+ 487 D 4 2 1 1188       st r2 @cell_owner r1
+ 488 L 5 5 0            mov r5 #0
+ 489 L 6 0 504          jmp L129
+                        :L130
+ 490 X 31 9 3 5 0       add r9 r3 r5
+ 491 D 2 8 9 1154       ld r8 @edit_buf r9
+ 492 X 31 6 8 0 16      mov r6 r8
+ 493 D 17 8 1 0         eq r8 r1 #0
+ 494 L 9 8 497          jf r8 L131
+ 495 D 4 6 5 1122       st r6 @cell0 r5
+ 496 L 6 0 498          jmp L132
+                        :L131
+ 497 D 4 6 5 1138       st r6 @cell1 r5
+                        :L132
+ 498 L 5 7 0            mov r7 #0
+ 499 L 6 0 501          jmp L133
+                        :L134
+ 500 D 10 7 7 1         add r7 r7 #1
+                        :L133
+ 501 D 19 8 7 4         lt r8 r7 #4
+ 502 L 8 8 500          jt r8 L134
+ 503 D 10 5 5 1         add r5 r5 #1
+                        :L129
+ 504 D 19 8 5 16        lt r8 r5 #16
+ 505 L 8 8 490          jt r8 L130
+ 506 D 2 8 1 1190       ld r8 @cell_rev r1
+ 507 D 10 9 8 1         add r9 r8 #1
+ 508 D 4 9 1 1190       st r9 @cell_rev r1
+ 509 L 5 8 0            mov r8 #0
+ 510 D 11 9 8 1         sub r9 r8 #1
+ 511 D 4 9 1 1188       st r9 @cell_owner r1
+ 512 X 31 29 4 0 21     push sp r4
+ 513 L 7 27 311         jal rads sem_signal
+                        :L128
+ 514 D 2 27 30 0        ld rads @0 fp
+ 515 D 11 30 30 10      sub fp fp #10
+ 516 D 2 9 30 9         ld r9 @9 fp
+ 517 D 2 8 30 8         ld r8 @8 fp
+ 518 D 2 7 30 7         ld r7 @7 fp
+ 519 D 2 6 30 6         ld r6 @6 fp
+ 520 D 2 5 30 5         ld r5 @5 fp
+ 521 D 2 4 30 4         ld r4 @4 fp
+ 522 D 2 3 30 3         ld r3 @3 fp
+ 523 D 2 2 30 2         ld r2 @2 fp
+ 524 D 2 1 30 1         ld r1 @1 fp
+ 525 X 31 27 0 0 19     ret rads
+                        ; fun task0 pv 0
+                        :task0
+                        ; gnAsg :(#1 0 )
+ 526 D 4 1 30 1         st r1 @1 fp
+ 527 D 4 2 30 2         st r2 @2 fp
+ 528 D 10 30 30 3       add fp fp #3
+ 529 D 4 27 30 0        st rads @0 fp
+ 530 L 5 1 0            mov r1 #0
+ 531 L 6 0 623          jmp L136
+                        :L137
+ 532 L 5 2 0            mov r2 #0
+ 533 X 31 29 2 0 21     push sp r2
+ 534 L 5 2 87           mov r2 #87
+ 535 X 31 29 2 0 21     push sp r2
+ 536 L 5 2 82           mov r2 #82
+ 537 X 31 29 2 0 21     push sp r2
+ 538 L 5 2 73           mov r2 #73
+ 539 X 31 29 2 0 21     push sp r2
+ 540 L 5 2 84           mov r2 #84
+ 541 X 31 29 2 0 21     push sp r2
+ 542 L 5 2 69           mov r2 #69
+ 543 X 31 29 2 0 21     push sp r2
+ 544 L 5 2 82           mov r2 #82
+ 545 X 31 29 2 0 21     push sp r2
+ 546 L 5 2 95           mov r2 #95
+ 547 X 31 29 2 0 21     push sp r2
+ 548 L 5 2 48           mov r2 #48
+ 549 X 31 29 2 0 21     push sp r2
+ 550 L 7 27 419         jal rads stage_text_word_by_word
+ 551 L 5 2 8            mov r2 #8
+ 552 X 31 29 2 0 21     push sp r2
+ 553 L 5 2 95           mov r2 #95
+ 554 X 31 29 2 0 21     push sp r2
+ 555 L 5 2 67           mov r2 #67
+ 556 X 31 29 2 0 21     push sp r2
+ 557 L 5 2 69           mov r2 #69
+ 558 X 31 29 2 0 21     push sp r2
+ 559 L 5 2 76           mov r2 #76
+ 560 X 31 29 2 0 21     push sp r2
+ 561 L 5 2 76           mov r2 #76
+ 562 X 31 29 2 0 21     push sp r2
+ 563 L 5 2 95           mov r2 #95
+ 564 X 31 29 2 0 21     push sp r2
+ 565 L 5 2 48           mov r2 #48
+ 566 X 31 29 2 0 21     push sp r2
+ 567 L 5 2 33           mov r2 #33
+ 568 X 31 29 2 0 21     push sp r2
+ 569 L 7 27 419         jal rads stage_text_word_by_word
+ 570 L 5 2 0            mov r2 #0
+ 571 X 31 29 2 0 21     push sp r2
+ 572 L 5 2 0            mov r2 #0
+ 573 X 31 29 2 0 21     push sp r2
+ 574 L 5 2 0            mov r2 #0
+ 575 X 31 29 2 0 21     push sp r2
+ 576 L 7 27 469         jal rads write_document_cell
+ 577 L 5 2 0            mov r2 #0
+ 578 X 31 29 2 0 21     push sp r2
+ 579 L 5 2 84           mov r2 #84
+ 580 X 31 29 2 0 21     push sp r2
+ 581 L 5 2 48           mov r2 #48
+ 582 X 31 29 2 0 21     push sp r2
+ 583 L 5 2 95           mov r2 #95
+ 584 X 31 29 2 0 21     push sp r2
+ 585 L 5 2 67           mov r2 #67
+ 586 X 31 29 2 0 21     push sp r2
+ 587 L 5 2 79           mov r2 #79
+ 588 X 31 29 2 0 21     push sp r2
+ 589 L 5 2 76           mov r2 #76
+ 590 X 31 29 2 0 21     push sp r2
+ 591 L 5 2 76           mov r2 #76
+ 592 X 31 29 2 0 21     push sp r2
+ 593 L 5 2 65           mov r2 #65
+ 594 X 31 29 2 0 21     push sp r2
+ 595 L 7 27 419         jal rads stage_text_word_by_word
+ 596 L 5 2 8            mov r2 #8
+ 597 X 31 29 2 0 21     push sp r2
+ 598 L 5 2 66           mov r2 #66
+ 599 X 31 29 2 0 21     push sp r2
+ 600 L 5 2 95           mov r2 #95
+ 601 X 31 29 2 0 21     push sp r2
+ 602 L 5 2 69           mov r2 #69
+ 603 X 31 29 2 0 21     push sp r2
+ 604 L 5 2 68           mov r2 #68
+ 605 X 31 29 2 0 21     push sp r2
+ 606 L 5 2 73           mov r2 #73
+ 607 X 31 29 2 0 21     push sp r2
+ 608 L 5 2 84           mov r2 #84
+ 609 X 31 29 2 0 21     push sp r2
+ 610 L 5 2 95           mov r2 #95
+ 611 X 31 29 2 0 21     push sp r2
+ 612 L 5 2 49           mov r2 #49
+ 613 X 31 29 2 0 21     push sp r2
+ 614 L 7 27 419         jal rads stage_text_word_by_word
+ 615 L 5 2 1            mov r2 #1
+ 616 X 31 29 2 0 21     push sp r2
+ 617 L 5 2 0            mov r2 #0
+ 618 X 31 29 2 0 21     push sp r2
+ 619 L 5 2 0            mov r2 #0
+ 620 X 31 29 2 0 21     push sp r2
+ 621 L 7 27 469         jal rads write_document_cell
+ 622 D 10 1 1 1         add r1 r1 #1
+                        :L136
+ 623 D 19 2 1 3         lt r2 r1 #3
+ 624 L 8 2 532          jt r2 L137
+ 625 L 7 27 338         jal rads terminate_task
+                        :L135
+ 626 D 2 27 30 0        ld rads @0 fp
+ 627 D 11 30 30 3       sub fp fp #3
+ 628 D 2 2 30 2         ld r2 @2 fp
+ 629 D 2 1 30 1         ld r1 @1 fp
+ 630 X 31 27 0 0 19     ret rads
+                        ; fun task1 pv 0
+                        :task1
+                        ; gnAsg :(#1 0 )
+ 631 D 4 1 30 1         st r1 @1 fp
+ 632 D 4 2 30 2         st r2 @2 fp
+ 633 D 10 30 30 3       add fp fp #3
+ 634 D 4 27 30 0        st rads @0 fp
+ 635 L 5 1 0            mov r1 #0
+ 636 L 6 0 728          jmp L139
+                        :L140
+ 637 L 5 2 16           mov r2 #16
+ 638 X 31 29 2 0 21     push sp r2
+ 639 L 5 2 87           mov r2 #87
+ 640 X 31 29 2 0 21     push sp r2
+ 641 L 5 2 82           mov r2 #82
+ 642 X 31 29 2 0 21     push sp r2
+ 643 L 5 2 73           mov r2 #73
+ 644 X 31 29 2 0 21     push sp r2
+ 645 L 5 2 84           mov r2 #84
+ 646 X 31 29 2 0 21     push sp r2
+ 647 L 5 2 69           mov r2 #69
+ 648 X 31 29 2 0 21     push sp r2
+ 649 L 5 2 82           mov r2 #82
+ 650 X 31 29 2 0 21     push sp r2
+ 651 L 5 2 95           mov r2 #95
+ 652 X 31 29 2 0 21     push sp r2
+ 653 L 5 2 49           mov r2 #49
+ 654 X 31 29 2 0 21     push sp r2
+ 655 L 7 27 419         jal rads stage_text_word_by_word
+ 656 L 5 2 24           mov r2 #24
+ 657 X 31 29 2 0 21     push sp r2
+ 658 L 5 2 95           mov r2 #95
+ 659 X 31 29 2 0 21     push sp r2
+ 660 L 5 2 83           mov r2 #83
+ 661 X 31 29 2 0 21     push sp r2
+ 662 L 5 2 72           mov r2 #72
+ 663 X 31 29 2 0 21     push sp r2
+ 664 L 5 2 65           mov r2 #65
+ 665 X 31 29 2 0 21     push sp r2
+ 666 L 5 2 82           mov r2 #82
+ 667 X 31 29 2 0 21     push sp r2
+ 668 L 5 2 69           mov r2 #69
+ 669 X 31 29 2 0 21     push sp r2
+ 670 L 5 2 68           mov r2 #68
+ 671 X 31 29 2 0 21     push sp r2
+ 672 L 5 2 33           mov r2 #33
+ 673 X 31 29 2 0 21     push sp r2
+ 674 L 7 27 419         jal rads stage_text_word_by_word
+ 675 L 5 2 0            mov r2 #0
+ 676 X 31 29 2 0 21     push sp r2
+ 677 L 5 2 1            mov r2 #1
+ 678 X 31 29 2 0 21     push sp r2
+ 679 L 5 2 16           mov r2 #16
+ 680 X 31 29 2 0 21     push sp r2
+ 681 L 7 27 469         jal rads write_document_cell
+ 682 L 5 2 16           mov r2 #16
+ 683 X 31 29 2 0 21     push sp r2
+ 684 L 5 2 84           mov r2 #84
+ 685 X 31 29 2 0 21     push sp r2
+ 686 L 5 2 49           mov r2 #49
+ 687 X 31 29 2 0 21     push sp r2
+ 688 L 5 2 95           mov r2 #95
+ 689 X 31 29 2 0 21     push sp r2
+ 690 L 5 2 85           mov r2 #85
+ 691 X 31 29 2 0 21     push sp r2
+ 692 L 5 2 80           mov r2 #80
+ 693 X 31 29 2 0 21     push sp r2
+ 694 L 5 2 68           mov r2 #68
+ 695 X 31 29 2 0 21     push sp r2
+ 696 L 5 2 65           mov r2 #65
+ 697 X 31 29 2 0 21     push sp r2
+ 698 L 5 2 84           mov r2 #84
+ 699 X 31 29 2 0 21     push sp r2
+ 700 L 7 27 419         jal rads stage_text_word_by_word
+ 701 L 5 2 24           mov r2 #24
+ 702 X 31 29 2 0 21     push sp r2
+ 703 L 5 2 69           mov r2 #69
+ 704 X 31 29 2 0 21     push sp r2
+ 705 L 5 2 68           mov r2 #68
+ 706 X 31 29 2 0 21     push sp r2
+ 707 L 5 2 95           mov r2 #95
+ 708 X 31 29 2 0 21     push sp r2
+ 709 L 5 2 67           mov r2 #67
+ 710 X 31 29 2 0 21     push sp r2
+ 711 L 5 2 69           mov r2 #69
+ 712 X 31 29 2 0 21     push sp r2
+ 713 L 5 2 76           mov r2 #76
+ 714 X 31 29 2 0 21     push sp r2
+ 715 L 5 2 76           mov r2 #76
+ 716 X 31 29 2 0 21     push sp r2
+ 717 L 5 2 49           mov r2 #49
+ 718 X 31 29 2 0 21     push sp r2
+ 719 L 7 27 419         jal rads stage_text_word_by_word
+ 720 L 5 2 1            mov r2 #1
+ 721 X 31 29 2 0 21     push sp r2
+ 722 L 5 2 1            mov r2 #1
+ 723 X 31 29 2 0 21     push sp r2
+ 724 L 5 2 16           mov r2 #16
+ 725 X 31 29 2 0 21     push sp r2
+ 726 L 7 27 469         jal rads write_document_cell
+ 727 D 10 1 1 1         add r1 r1 #1
+                        :L139
+ 728 D 19 2 1 3         lt r2 r1 #3
+ 729 L 8 2 637          jt r2 L140
+ 730 L 7 27 338         jal rads terminate_task
+                        :L138
+ 731 D 2 27 30 0        ld rads @0 fp
+ 732 D 11 30 30 3       sub fp fp #3
+ 733 D 2 2 30 2         ld r2 @2 fp
+ 734 D 2 1 30 1         ld r1 @1 fp
+ 735 X 31 27 0 0 19     ret rads
+                        ; fun print_cell_contents pv 1
+                        :print_cell_contents
+                        ; gnAsg :(#2 0 )
+ 736 D 4 1 30 1         st r1 @1 fp
+ 737 D 4 2 30 2         st r2 @2 fp
+ 738 D 4 3 30 3         st r3 @3 fp
+ 739 D 10 30 30 4       add fp fp #4
+ 740 D 4 27 30 0        st rads @0 fp
+ 741 X 31 29 1 0 22     pop sp r1
+ 742 L 5 3 91           mov r3 #91
+ 743 X 31 3 2 0 20      trap r3 #2
+ 744 L 5 2 0            mov r2 #0
+ 745 L 6 0 754          jmp L142
+                        :L143
+ 746 D 17 3 1 0         eq r3 r1 #0
+ 747 L 9 3 751          jf r3 L144
+ 748 D 2 3 2 1122       ld r3 @cell0 r2
+ 749 X 31 3 2 0 20      trap r3 #2
+ 750 L 6 0 753          jmp L145
+                        :L144
+ 751 D 2 3 2 1138       ld r3 @cell1 r2
+ 752 X 31 3 2 0 20      trap r3 #2
+                        :L145
+ 753 D 10 2 2 1         add r2 r2 #1
+                        :L142
+ 754 D 19 3 2 16        lt r3 r2 #16
+ 755 L 8 3 746          jt r3 L143
+ 756 L 5 3 93           mov r3 #93
+ 757 X 31 3 2 0 20      trap r3 #2
+                        :L141
+ 758 D 2 27 30 0        ld rads @0 fp
+ 759 D 11 30 30 4       sub fp fp #4
+ 760 D 2 3 30 3         ld r3 @3 fp
+ 761 D 2 2 30 2         ld r2 @2 fp
+ 762 D 2 1 30 1         ld r1 @1 fp
+ 763 X 31 27 0 0 19     ret rads
+                        ; fun task2_header pv 0
+                        :task2_header
+ 764 D 4 1 30 1         st r1 @1 fp
+ 765 D 10 30 30 2       add fp fp #2
+ 766 D 4 27 30 0        st rads @0 fp
+ 767 L 5 1 0            mov r1 #0
+ 768 X 31 1 23 0 20     trap r1 #23
+ 769 L 5 1 2            mov r1 #2
+ 770 X 31 1 23 0 20     trap r1 #23
+ 771 L 5 1 61           mov r1 #61
+ 772 X 31 1 2 0 20      trap r1 #2
+ 773 L 5 1 61           mov r1 #61
+ 774 X 31 1 2 0 20      trap r1 #2
+ 775 L 5 1 61           mov r1 #61
+ 776 X 31 1 2 0 20      trap r1 #2
+ 777 L 5 1 32           mov r1 #32
+ 778 X 31 1 2 0 20      trap r1 #2
+ 779 L 5 1 83           mov r1 #83
+ 780 X 31 1 2 0 20      trap r1 #2
+ 781 L 5 1 50           mov r1 #50
+ 782 X 31 1 2 0 20      trap r1 #2
+ 783 L 5 1 49           mov r1 #49
+ 784 X 31 1 2 0 20      trap r1 #2
+ 785 L 5 1 47           mov r1 #47
+ 786 X 31 1 2 0 20      trap r1 #2
+ 787 L 5 1 77           mov r1 #77
+ 788 X 31 1 2 0 20      trap r1 #2
+ 789 L 5 1 79           mov r1 #79
+ 790 X 31 1 2 0 20      trap r1 #2
+ 791 L 5 1 83           mov r1 #83
+ 792 X 31 1 2 0 20      trap r1 #2
+ 793 L 5 1 32           mov r1 #32
+ 794 X 31 1 2 0 20      trap r1 #2
+ 795 L 5 1 77           mov r1 #77
+ 796 X 31 1 2 0 20      trap r1 #2
+ 797 L 5 1 85           mov r1 #85
+ 798 X 31 1 2 0 20      trap r1 #2
+ 799 L 5 1 76           mov r1 #76
+ 800 X 31 1 2 0 20      trap r1 #2
+ 801 L 5 1 84           mov r1 #84
+ 802 X 31 1 2 0 20      trap r1 #2
+ 803 L 5 1 73           mov r1 #73
+ 804 X 31 1 2 0 20      trap r1 #2
+ 805 L 5 1 84           mov r1 #84
+ 806 X 31 1 2 0 20      trap r1 #2
+ 807 L 5 1 72           mov r1 #72
+ 808 X 31 1 2 0 20      trap r1 #2
+ 809 L 5 1 82           mov r1 #82
+ 810 X 31 1 2 0 20      trap r1 #2
+ 811 L 5 1 69           mov r1 #69
+ 812 X 31 1 2 0 20      trap r1 #2
+ 813 L 5 1 65           mov r1 #65
+ 814 X 31 1 2 0 20      trap r1 #2
+ 815 L 5 1 68           mov r1 #68
+ 816 X 31 1 2 0 20      trap r1 #2
+ 817 L 5 1 69           mov r1 #69
+ 818 X 31 1 2 0 20      trap r1 #2
+ 819 L 5 1 68           mov r1 #68
+ 820 X 31 1 2 0 20      trap r1 #2
+ 821 L 5 1 32           mov r1 #32
+ 822 X 31 1 2 0 20      trap r1 #2
+ 823 L 5 1 79           mov r1 #79
+ 824 X 31 1 2 0 20      trap r1 #2
+ 825 L 5 1 78           mov r1 #78
+ 826 X 31 1 2 0 20      trap r1 #2
+ 827 L 5 1 76           mov r1 #76
+ 828 X 31 1 2 0 20      trap r1 #2
+ 829 L 5 1 73           mov r1 #73
+ 830 X 31 1 2 0 20      trap r1 #2
+ 831 L 5 1 78           mov r1 #78
+ 832 X 31 1 2 0 20      trap r1 #2
+ 833 L 5 1 69           mov r1 #69
+ 834 X 31 1 2 0 20      trap r1 #2
+ 835 L 5 1 32           mov r1 #32
+ 836 X 31 1 2 0 20      trap r1 #2
+ 837 L 5 1 68           mov r1 #68
+ 838 X 31 1 2 0 20      trap r1 #2
+ 839 L 5 1 79           mov r1 #79
+ 840 X 31 1 2 0 20      trap r1 #2
+ 841 L 5 1 67           mov r1 #67
+ 842 X 31 1 2 0 20      trap r1 #2
+ 843 L 5 1 85           mov r1 #85
+ 844 X 31 1 2 0 20      trap r1 #2
+ 845 L 5 1 77           mov r1 #77
+ 846 X 31 1 2 0 20      trap r1 #2
+ 847 L 5 1 69           mov r1 #69
+ 848 X 31 1 2 0 20      trap r1 #2
+ 849 L 5 1 78           mov r1 #78
+ 850 X 31 1 2 0 20      trap r1 #2
+ 851 L 5 1 84           mov r1 #84
+ 852 X 31 1 2 0 20      trap r1 #2
+ 853 L 5 1 32           mov r1 #32
+ 854 X 31 1 2 0 20      trap r1 #2
+ 855 L 5 1 69           mov r1 #69
+ 856 X 31 1 2 0 20      trap r1 #2
+ 857 L 5 1 68           mov r1 #68
+ 858 X 31 1 2 0 20      trap r1 #2
+ 859 L 5 1 73           mov r1 #73
+ 860 X 31 1 2 0 20      trap r1 #2
+ 861 L 5 1 84           mov r1 #84
+ 862 X 31 1 2 0 20      trap r1 #2
+ 863 L 5 1 79           mov r1 #79
+ 864 X 31 1 2 0 20      trap r1 #2
+ 865 L 5 1 82           mov r1 #82
+ 866 X 31 1 2 0 20      trap r1 #2
+ 867 L 5 1 32           mov r1 #32
+ 868 X 31 1 2 0 20      trap r1 #2
+ 869 L 5 1 61           mov r1 #61
+ 870 X 31 1 2 0 20      trap r1 #2
+ 871 L 5 1 61           mov r1 #61
+ 872 X 31 1 2 0 20      trap r1 #2
+ 873 L 5 1 61           mov r1 #61
+ 874 X 31 1 2 0 20      trap r1 #2
+ 875 L 5 1 6            mov r1 #6
+ 876 X 31 1 23 0 20     trap r1 #23
+ 877 L 5 1 5            mov r1 #5
+ 878 X 31 1 23 0 20     trap r1 #23
+ 879 L 5 1 83           mov r1 #83
+ 880 X 31 1 2 0 20      trap r1 #2
+ 881 L 5 1 99           mov r1 #99
+ 882 X 31 1 2 0 20      trap r1 #2
+ 883 L 5 1 104          mov r1 #104
+ 884 X 31 1 2 0 20      trap r1 #2
+ 885 L 5 1 101          mov r1 #101
+ 886 X 31 1 2 0 20      trap r1 #2
+ 887 L 5 1 100          mov r1 #100
+ 888 X 31 1 2 0 20      trap r1 #2
+ 889 L 5 1 117          mov r1 #117
+ 890 X 31 1 2 0 20      trap r1 #2
+ 891 L 5 1 108          mov r1 #108
+ 892 X 31 1 2 0 20      trap r1 #2
+ 893 L 5 1 101          mov r1 #101
+ 894 X 31 1 2 0 20      trap r1 #2
+ 895 L 5 1 114          mov r1 #114
+ 896 X 31 1 2 0 20      trap r1 #2
+ 897 L 5 1 32           mov r1 #32
+ 898 X 31 1 2 0 20      trap r1 #2
+ 899 L 5 1 84           mov r1 #84
+ 900 X 31 1 2 0 20      trap r1 #2
+ 901 L 5 1 105          mov r1 #105
+ 902 X 31 1 2 0 20      trap r1 #2
+ 903 L 5 1 99           mov r1 #99
+ 904 X 31 1 2 0 20      trap r1 #2
+ 905 L 5 1 107          mov r1 #107
+ 906 X 31 1 2 0 20      trap r1 #2
+ 907 L 5 1 115          mov r1 #115
+ 908 X 31 1 2 0 20      trap r1 #2
+ 909 L 5 1 58           mov r1 #58
+ 910 X 31 1 2 0 20      trap r1 #2
+ 911 L 5 1 32           mov r1 #32
+ 912 X 31 1 2 0 20      trap r1 #2
+ 913 L 1 1 1106         ld r1 tick_count
+ 914 X 31 1 1 0 20      trap r1 #1
+ 915 L 5 1 32           mov r1 #32
+ 916 X 31 1 2 0 20      trap r1 #2
+ 917 L 5 1 124          mov r1 #124
+ 918 X 31 1 2 0 20      trap r1 #2
+ 919 L 5 1 32           mov r1 #32
+ 920 X 31 1 2 0 20      trap r1 #2
+ 921 L 5 1 65           mov r1 #65
+ 922 X 31 1 2 0 20      trap r1 #2
+ 923 L 5 1 99           mov r1 #99
+ 924 X 31 1 2 0 20      trap r1 #2
+ 925 L 5 1 116          mov r1 #116
+ 926 X 31 1 2 0 20      trap r1 #2
+ 927 L 5 1 105          mov r1 #105
+ 928 X 31 1 2 0 20      trap r1 #2
+ 929 L 5 1 118          mov r1 #118
+ 930 X 31 1 2 0 20      trap r1 #2
+ 931 L 5 1 101          mov r1 #101
+ 932 X 31 1 2 0 20      trap r1 #2
+ 933 L 5 1 32           mov r1 #32
+ 934 X 31 1 2 0 20      trap r1 #2
+ 935 L 5 1 84           mov r1 #84
+ 936 X 31 1 2 0 20      trap r1 #2
+ 937 L 5 1 104          mov r1 #104
+ 938 X 31 1 2 0 20      trap r1 #2
+ 939 L 5 1 114          mov r1 #114
+ 940 X 31 1 2 0 20      trap r1 #2
+ 941 L 5 1 101          mov r1 #101
+ 942 X 31 1 2 0 20      trap r1 #2
+ 943 L 5 1 97           mov r1 #97
+ 944 X 31 1 2 0 20      trap r1 #2
+ 945 L 5 1 100          mov r1 #100
+ 946 X 31 1 2 0 20      trap r1 #2
+ 947 L 5 1 115          mov r1 #115
+ 948 X 31 1 2 0 20      trap r1 #2
+ 949 L 5 1 58           mov r1 #58
+ 950 X 31 1 2 0 20      trap r1 #2
+ 951 L 5 1 32           mov r1 #32
+ 952 X 31 1 2 0 20      trap r1 #2
+ 953 L 1 1 1101         ld r1 nump
+ 954 X 31 1 1 0 20      trap r1 #1
+ 955 L 5 1 32           mov r1 #32
+ 956 X 31 1 2 0 20      trap r1 #2
+ 957 L 5 1 124          mov r1 #124
+ 958 X 31 1 2 0 20      trap r1 #2
+ 959 L 5 1 32           mov r1 #32
+ 960 X 31 1 2 0 20      trap r1 #2
+ 961 L 5 1 83           mov r1 #83
+ 962 X 31 1 2 0 20      trap r1 #2
+ 963 L 5 1 110          mov r1 #110
+ 964 X 31 1 2 0 20      trap r1 #2
+ 965 L 5 1 97           mov r1 #97
+ 966 X 31 1 2 0 20      trap r1 #2
+ 967 L 5 1 112          mov r1 #112
+ 968 X 31 1 2 0 20      trap r1 #2
+ 969 L 5 1 115          mov r1 #115
+ 970 X 31 1 2 0 20      trap r1 #2
+ 971 L 5 1 104          mov r1 #104
+ 972 X 31 1 2 0 20      trap r1 #2
+ 973 L 5 1 111          mov r1 #111
+ 974 X 31 1 2 0 20      trap r1 #2
+ 975 L 5 1 116          mov r1 #116
+ 976 X 31 1 2 0 20      trap r1 #2
+ 977 L 5 1 115          mov r1 #115
+ 978 X 31 1 2 0 20      trap r1 #2
+ 979 L 5 1 58           mov r1 #58
+ 980 X 31 1 2 0 20      trap r1 #2
+ 981 L 5 1 32           mov r1 #32
+ 982 X 31 1 2 0 20      trap r1 #2
+ 983 L 1 1 1202         ld r1 snapshot_count
+ 984 X 31 1 1 0 20      trap r1 #1
+ 985 L 5 1 6            mov r1 #6
+ 986 X 31 1 23 0 20     trap r1 #23
+                        :L146
+ 987 D 2 27 30 0        ld rads @0 fp
+ 988 D 11 30 30 2       sub fp fp #2
+ 989 D 2 1 30 1         ld r1 @1 fp
+ 990 X 31 27 0 0 19     ret rads
+                        ; fun task2_cell_status pv 1
+                        :task2_cell_status
+                        ; gnAsg :(#2 (vec cell_owner #1 ))
+                        ; gnAsg :(#3 (vec cell_sem #1 ))
+                        ; gnAsg :(#4 (vec cell_wait_cnt #1 ))
+                        ; gnAsg :(#5 (vec cell_rev #1 ))
+ 991 D 4 1 30 1         st r1 @1 fp
+ 992 D 4 2 30 2         st r2 @2 fp
+ 993 D 4 3 30 3         st r3 @3 fp
+ 994 D 4 4 30 4         st r4 @4 fp
+ 995 D 4 5 30 5         st r5 @5 fp
+ 996 D 4 6 30 6         st r6 @6 fp
+ 997 D 4 7 30 7         st r7 @7 fp
+ 998 D 4 8 30 8         st r8 @8 fp
+ 999 D 10 30 30 9       add fp fp #9
+1000 D 4 27 30 0        st rads @0 fp
+1001 X 31 29 1 0 22     pop sp r1
+1002 D 2 6 1 1188       ld r6 @cell_owner r1
+1003 X 31 2 6 0 16      mov r2 r6
+1004 D 2 6 1 1186       ld r6 @cell_sem r1
+1005 X 31 3 6 0 16      mov r3 r6
+1006 D 2 6 1 1192       ld r6 @cell_wait_cnt r1
+1007 X 31 4 6 0 16      mov r4 r6
+1008 D 2 6 1 1190       ld r6 @cell_rev r1
+1009 X 31 5 6 0 16      mov r5 r6
+1010 L 5 7 0            mov r7 #0
+1011 D 11 8 7 1         sub r8 r7 #1
+1012 X 31 6 2 8 7       eq r6 r2 r8
+1013 L 9 6 1092         jf r6 L148
+1014 L 5 6 3            mov r6 #3
+1015 X 31 6 23 0 20     trap r6 #23
+1016 D 17 6 1 0         eq r6 r1 #0
+1017 L 9 6 1055         jf r6 L149
+1018 L 5 6 67           mov r6 #67
+1019 X 31 6 2 0 20      trap r6 #2
+1020 L 5 6 69           mov r6 #69
+1021 X 31 6 2 0 20      trap r6 #2
+1022 L 5 6 76           mov r6 #76
+1023 X 31 6 2 0 20      trap r6 #2
+1024 L 5 6 76           mov r6 #76
+1025 X 31 6 2 0 20      trap r6 #2
+1026 L 5 6 32           mov r6 #32
+1027 X 31 6 2 0 20      trap r6 #2
+1028 L 5 6 48           mov r6 #48
+1029 X 31 6 2 0 20      trap r6 #2
+1030 L 5 6 32           mov r6 #32
+1031 X 31 6 2 0 20      trap r6 #2
+1032 L 5 6 91           mov r6 #91
+1033 X 31 6 2 0 20      trap r6 #2
+1034 L 5 6 85           mov r6 #85
+1035 X 31 6 2 0 20      trap r6 #2
+1036 L 5 6 78           mov r6 #78
+1037 X 31 6 2 0 20      trap r6 #2
+1038 L 5 6 76           mov r6 #76
+1039 X 31 6 2 0 20      trap r6 #2
+1040 L 5 6 79           mov r6 #79
+1041 X 31 6 2 0 20      trap r6 #2
+1042 L 5 6 67           mov r6 #67
+1043 X 31 6 2 0 20      trap r6 #2
+1044 L 5 6 75           mov r6 #75
+1045 X 31 6 2 0 20      trap r6 #2
+1046 L 5 6 69           mov r6 #69
+1047 X 31 6 2 0 20      trap r6 #2
+1048 L 5 6 68           mov r6 #68
+1049 X 31 6 2 0 20      trap r6 #2
+1050 L 5 6 93           mov r6 #93
+1051 X 31 6 2 0 20      trap r6 #2
+1052 L 5 6 32           mov r6 #32
+1053 X 31 6 2 0 20      trap r6 #2
+1054 L 6 0 1091         jmp L150
+                        :L149
+1055 L 5 6 67           mov r6 #67
+1056 X 31 6 2 0 20      trap r6 #2
+1057 L 5 6 69           mov r6 #69
+1058 X 31 6 2 0 20      trap r6 #2
+1059 L 5 6 76           mov r6 #76
+1060 X 31 6 2 0 20      trap r6 #2
+1061 L 5 6 76           mov r6 #76
+1062 X 31 6 2 0 20      trap r6 #2
+1063 L 5 6 32           mov r6 #32
+1064 X 31 6 2 0 20      trap r6 #2
+1065 L 5 6 49           mov r6 #49
+1066 X 31 6 2 0 20      trap r6 #2
+1067 L 5 6 32           mov r6 #32
+1068 X 31 6 2 0 20      trap r6 #2
+1069 L 5 6 91           mov r6 #91
+1070 X 31 6 2 0 20      trap r6 #2
+1071 L 5 6 85           mov r6 #85
+1072 X 31 6 2 0 20      trap r6 #2
+1073 L 5 6 78           mov r6 #78
+1074 X 31 6 2 0 20      trap r6 #2
+1075 L 5 6 76           mov r6 #76
+1076 X 31 6 2 0 20      trap r6 #2
+1077 L 5 6 79           mov r6 #79
+1078 X 31 6 2 0 20      trap r6 #2
+1079 L 5 6 67           mov r6 #67
+1080 X 31 6 2 0 20      trap r6 #2
+1081 L 5 6 75           mov r6 #75
+1082 X 31 6 2 0 20      trap r6 #2
+1083 L 5 6 69           mov r6 #69
+1084 X 31 6 2 0 20      trap r6 #2
+1085 L 5 6 68           mov r6 #68
+1086 X 31 6 2 0 20      trap r6 #2
+1087 L 5 6 93           mov r6 #93
+1088 X 31 6 2 0 20      trap r6 #2
+1089 L 5 6 32           mov r6 #32
+1090 X 31 6 2 0 20      trap r6 #2
+                        :L150
+1091 L 6 0 1178         jmp L151
+                        :L148
+1092 L 5 6 4            mov r6 #4
+1093 X 31 6 23 0 20     trap r6 #23
+1094 D 17 6 1 0         eq r6 r1 #0
+1095 L 9 6 1135         jf r6 L152
+1096 L 5 6 67           mov r6 #67
+1097 X 31 6 2 0 20      trap r6 #2
+1098 L 5 6 69           mov r6 #69
+1099 X 31 6 2 0 20      trap r6 #2
+1100 L 5 6 76           mov r6 #76
+1101 X 31 6 2 0 20      trap r6 #2
+1102 L 5 6 76           mov r6 #76
+1103 X 31 6 2 0 20      trap r6 #2
+1104 L 5 6 32           mov r6 #32
+1105 X 31 6 2 0 20      trap r6 #2
+1106 L 5 6 48           mov r6 #48
+1107 X 31 6 2 0 20      trap r6 #2
+1108 L 5 6 32           mov r6 #32
+1109 X 31 6 2 0 20      trap r6 #2
+1110 L 5 6 91           mov r6 #91
+1111 X 31 6 2 0 20      trap r6 #2
+1112 L 5 6 76           mov r6 #76
+1113 X 31 6 2 0 20      trap r6 #2
+1114 L 5 6 79           mov r6 #79
+1115 X 31 6 2 0 20      trap r6 #2
+1116 L 5 6 67           mov r6 #67
+1117 X 31 6 2 0 20      trap r6 #2
+1118 L 5 6 75           mov r6 #75
+1119 X 31 6 2 0 20      trap r6 #2
+1120 L 5 6 69           mov r6 #69
+1121 X 31 6 2 0 20      trap r6 #2
+1122 L 5 6 68           mov r6 #68
+1123 X 31 6 2 0 20      trap r6 #2
+1124 L 5 6 32           mov r6 #32
+1125 X 31 6 2 0 20      trap r6 #2
+1126 L 5 6 66           mov r6 #66
+1127 X 31 6 2 0 20      trap r6 #2
+1128 L 5 6 89           mov r6 #89
+1129 X 31 6 2 0 20      trap r6 #2
+1130 L 5 6 32           mov r6 #32
+1131 X 31 6 2 0 20      trap r6 #2
+1132 L 5 6 84           mov r6 #84
+1133 X 31 6 2 0 20      trap r6 #2
+1134 L 6 0 1173         jmp L153
+                        :L152
+1135 L 5 6 67           mov r6 #67
+1136 X 31 6 2 0 20      trap r6 #2
+1137 L 5 6 69           mov r6 #69
+1138 X 31 6 2 0 20      trap r6 #2
+1139 L 5 6 76           mov r6 #76
+1140 X 31 6 2 0 20      trap r6 #2
+1141 L 5 6 76           mov r6 #76
+1142 X 31 6 2 0 20      trap r6 #2
+1143 L 5 6 32           mov r6 #32
+1144 X 31 6 2 0 20      trap r6 #2
+1145 L 5 6 49           mov r6 #49
+1146 X 31 6 2 0 20      trap r6 #2
+1147 L 5 6 32           mov r6 #32
+1148 X 31 6 2 0 20      trap r6 #2
+1149 L 5 6 91           mov r6 #91
+1150 X 31 6 2 0 20      trap r6 #2
+1151 L 5 6 76           mov r6 #76
+1152 X 31 6 2 0 20      trap r6 #2
+1153 L 5 6 79           mov r6 #79
+1154 X 31 6 2 0 20      trap r6 #2
+1155 L 5 6 67           mov r6 #67
+1156 X 31 6 2 0 20      trap r6 #2
+1157 L 5 6 75           mov r6 #75
+1158 X 31 6 2 0 20      trap r6 #2
+1159 L 5 6 69           mov r6 #69
+1160 X 31 6 2 0 20      trap r6 #2
+1161 L 5 6 68           mov r6 #68
+1162 X 31 6 2 0 20      trap r6 #2
+1163 L 5 6 32           mov r6 #32
+1164 X 31 6 2 0 20      trap r6 #2
+1165 L 5 6 66           mov r6 #66
+1166 X 31 6 2 0 20      trap r6 #2
+1167 L 5 6 89           mov r6 #89
+1168 X 31 6 2 0 20      trap r6 #2
+1169 L 5 6 32           mov r6 #32
+1170 X 31 6 2 0 20      trap r6 #2
+1171 L 5 6 84           mov r6 #84
+1172 X 31 6 2 0 20      trap r6 #2
+                        :L153
+1173 X 31 2 1 0 20      trap r2 #1
+1174 L 5 6 93           mov r6 #93
+1175 X 31 6 2 0 20      trap r6 #2
+1176 L 5 6 32           mov r6 #32
+1177 X 31 6 2 0 20      trap r6 #2
+                        :L151
+1178 L 5 6 83           mov r6 #83
+1179 X 31 6 2 0 20      trap r6 #2
+1180 L 5 6 101          mov r6 #101
+1181 X 31 6 2 0 20      trap r6 #2
+1182 L 5 6 109          mov r6 #109
+1183 X 31 6 2 0 20      trap r6 #2
+1184 L 5 6 72           mov r6 #72
+1185 X 31 6 2 0 20      trap r6 #2
+1186 L 5 6 100          mov r6 #100
+1187 X 31 6 2 0 20      trap r6 #2
+1188 L 5 6 108          mov r6 #108
+1189 X 31 6 2 0 20      trap r6 #2
+1190 L 5 6 58           mov r6 #58
+1191 X 31 6 2 0 20      trap r6 #2
+1192 X 31 3 1 0 20      trap r3 #1
+1193 L 5 6 32           mov r6 #32
+1194 X 31 6 2 0 20      trap r6 #2
+1195 L 5 6 87           mov r6 #87
+1196 X 31 6 2 0 20      trap r6 #2
+1197 L 5 6 97           mov r6 #97
+1198 X 31 6 2 0 20      trap r6 #2
+1199 L 5 6 105          mov r6 #105
+1200 X 31 6 2 0 20      trap r6 #2
+1201 L 5 6 116          mov r6 #116
+1202 X 31 6 2 0 20      trap r6 #2
+1203 L 5 6 81           mov r6 #81
+1204 X 31 6 2 0 20      trap r6 #2
+1205 L 5 6 58           mov r6 #58
+1206 X 31 6 2 0 20      trap r6 #2
+1207 X 31 4 1 0 20      trap r4 #1
+1208 L 5 6 32           mov r6 #32
+1209 X 31 6 2 0 20      trap r6 #2
+1210 L 5 6 82           mov r6 #82
+1211 X 31 6 2 0 20      trap r6 #2
+1212 L 5 6 101          mov r6 #101
+1213 X 31 6 2 0 20      trap r6 #2
+1214 L 5 6 118          mov r6 #118
+1215 X 31 6 2 0 20      trap r6 #2
+1216 L 5 6 58           mov r6 #58
+1217 X 31 6 2 0 20      trap r6 #2
+1218 X 31 5 1 0 20      trap r5 #1
+1219 L 5 6 32           mov r6 #32
+1220 X 31 6 2 0 20      trap r6 #2
+1221 X 31 29 1 0 21     push sp r1
+1222 L 7 27 736         jal rads print_cell_contents
+1223 L 5 6 6            mov r6 #6
+1224 X 31 6 23 0 20     trap r6 #23
+                        :L147
+1225 D 2 27 30 0        ld rads @0 fp
+1226 D 11 30 30 9       sub fp fp #9
+1227 D 2 8 30 8         ld r8 @8 fp
+1228 D 2 7 30 7         ld r7 @7 fp
+1229 D 2 6 30 6         ld r6 @6 fp
+1230 D 2 5 30 5         ld r5 @5 fp
+1231 D 2 4 30 4         ld r4 @4 fp
+1232 D 2 3 30 3         ld r3 @3 fp
+1233 D 2 2 30 2         ld r2 @2 fp
+1234 D 2 1 30 1         ld r1 @1 fp
+1235 X 31 27 0 0 19     ret rads
+                        ; fun task2 pv 0
+                        :task2
+                        ; gnAsg :(#1 0 )
+1236 D 4 1 30 1         st r1 @1 fp
+1237 D 4 2 30 2         st r2 @2 fp
+1238 D 10 30 30 3       add fp fp #3
+1239 D 4 27 30 0        st rads @0 fp
+1240 L 5 1 0            mov r1 #0
+1241 L 6 0 1257         jmp L155
+                        :L156
+1242 L 5 2 0            mov r2 #0
+1243 X 31 2 15 0 20     trap r2 #15
+1244 L 7 27 764         jal rads task2_header
+1245 L 5 2 0            mov r2 #0
+1246 X 31 29 2 0 21     push sp r2
+1247 L 7 27 991         jal rads task2_cell_status
+1248 L 5 2 1            mov r2 #1
+1249 X 31 29 2 0 21     push sp r2
+1250 L 7 27 991         jal rads task2_cell_status
+1251 L 5 2 1            mov r2 #1
+1252 X 31 2 23 0 20     trap r2 #23
+1253 L 5 2 0            mov r2 #0
+1254 X 31 2 16 0 20     trap r2 #16
+1255 X 31 0 0 0 29      swi
+1256 D 10 1 1 1         add r1 r1 #1
+                        :L155
+1257 D 19 2 1 8         lt r2 r1 #8
+1258 L 8 2 1242         jt r2 L156
+1259 L 7 27 338         jal rads terminate_task
+                        :L154
+1260 D 2 27 30 0        ld rads @0 fp
+1261 D 11 30 30 3       sub fp fp #3
+1262 D 2 2 30 2         ld r2 @2 fp
+1263 D 2 1 30 1         ld r1 @1 fp
+1264 X 31 27 0 0 19     ret rads
+                        ; fun task3 pv 0
+                        :task3
+                        ; gnAsg :(#1 0 )
+1265 D 4 1 30 1         st r1 @1 fp
+1266 D 4 2 30 2         st r2 @2 fp
+1267 D 10 30 30 3       add fp fp #3
+1268 D 4 27 30 0        st rads @0 fp
+1269 L 5 1 0            mov r1 #0
+1270 L 6 0 1279         jmp L158
+                        :L159
+1271 L 5 2 1            mov r2 #1
+1272 X 31 29 2 0 21     push sp r2
+1273 L 5 2 3            mov r2 #3
+1274 X 31 29 2 0 21     push sp r2
+1275 L 5 2 0            mov r2 #0
+1276 X 31 29 2 0 21     push sp r2
+1277 L 7 27 469         jal rads write_document_cell
+1278 D 10 1 1 1         add r1 r1 #1
+                        :L158
+1279 D 19 2 1 2         lt r2 r1 #2
+1280 L 8 2 1271         jt r2 L159
+1281 L 7 27 338         jal rads terminate_task
+                        :L157
+1282 D 2 27 30 0        ld rads @0 fp
+1283 D 11 30 30 3       sub fp fp #3
+1284 D 2 2 30 2         ld r2 @2 fp
+1285 D 2 1 30 1         ld r1 @1 fp
+1286 X 31 27 0 0 19     ret rads
+                        ; fun task4 pv 0
+                        :task4
+                        ; gnAsg :(#1 0 )
+                        ; gnAsg :(#2 (call malloc 16 ))
+                        ; gnAsg :(#3 0 )
+                        ; gnAsg :((vec #2 #3 )(vec cell0 #3 ))
+                        ; gnAsg :((vec audit_snapshots snapshot_count )#2 )
+                        ; gnAsg :(snapshot_count (+ snapshot_count 1 ))
+1287 D 4 1 30 1         st r1 @1 fp
+1288 D 4 2 30 2         st r2 @2 fp
+1289 D 4 3 30 3         st r3 @3 fp
+1290 D 4 4 30 4         st r4 @4 fp
+1291 D 4 5 30 5         st r5 @5 fp
+1292 D 10 30 30 6       add fp fp #6
+1293 D 4 27 30 0        st rads @0 fp
+1294 L 5 1 0            mov r1 #0
+1295 L 6 0 1323         jmp L161
+                        :L162
+1296 L 5 5 0            mov r5 #0
+1297 D 2 4 5 1186       ld r4 @cell_sem r5
+1298 X 31 29 4 0 21     push sp r4
+1299 L 7 27 261         jal rads sem_wait
+1300 L 5 4 16           mov r4 #16
+1301 X 31 4 19 0 20     trap r4 #19
+1302 X 31 2 28 0 16     mov r2 r28
+1303 D 18 4 2 0         ne r4 r2 #0
+1304 L 9 4 1317         jf r4 L163
+1305 L 5 3 0            mov r3 #0
+1306 L 6 0 1310         jmp L164
+                        :L165
+1307 D 2 4 3 1122       ld r4 @cell0 r3
+1308 X 31 4 2 3 18      st r4 +r2 r3
+1309 D 10 3 3 1         add r3 r3 #1
+                        :L164
+1310 D 19 4 3 16        lt r4 r3 #16
+1311 L 8 4 1307         jt r4 L165
+1312 L 1 4 1202         ld r4 snapshot_count
+1313 D 4 2 4 1194       st r2 @audit_snapshots r4
+1314 L 1 4 1202         ld r4 snapshot_count
+1315 D 10 5 4 1         add r5 r4 #1
+1316 L 3 5 1202         st r5 snapshot_count
+                        :L163
+1317 L 5 5 0            mov r5 #0
+1318 D 2 4 5 1186       ld r4 @cell_sem r5
+1319 X 31 29 4 0 21     push sp r4
+1320 L 7 27 311         jal rads sem_signal
+1321 X 31 0 0 0 29      swi
+1322 D 10 1 1 1         add r1 r1 #1
+                        :L161
+1323 D 19 4 1 3         lt r4 r1 #3
+1324 L 8 4 1296         jt r4 L162
+1325 L 7 27 338         jal rads terminate_task
+                        :L160
+1326 D 2 27 30 0        ld rads @0 fp
+1327 D 11 30 30 6       sub fp fp #6
+1328 D 2 5 30 5         ld r5 @5 fp
+1329 D 2 4 30 4         ld r4 @4 fp
+1330 D 2 3 30 3         ld r3 @3 fp
+1331 D 2 2 30 2         ld r2 @2 fp
+1332 D 2 1 30 1         ld r1 @1 fp
+1333 X 31 27 0 0 19     ret rads
+                        ; fun main pv 0
+                        :main
+                        ; gnAsg :(p0 (call newp 0 ))
+                        ; gnAsg :((vec p0 0 )(& task0 ))
+                        ; gnAsg :(p1 (call newp 1 ))
+                        ; gnAsg :((vec p1 0 )(& task1 ))
+                        ; gnAsg :(p2 (call newp 2 ))
+                        ; gnAsg :((vec p2 0 )(& task2 ))
+                        ; gnAsg :(p3 (call newp 3 ))
+                        ; gnAsg :((vec p3 0 )(& task3 ))
+                        ; gnAsg :(p4 (call newp 4 ))
+                        ; gnAsg :((vec p4 0 )(& task4 ))
+                        ; gnAsg :(boot_p pcb_pool_ptr )
+                        ; gnAsg :(pcb_pool_ptr (+ pcb_pool_ptr 8 ))
+                        ; gnAsg :((vec boot_p 4 )99 )
+                        ; gnAsg :((vec boot_p 7 )ready_head )
+                        ; gnAsg :(currentp boot_p )
+1334 D 4 1 30 1         st r1 @1 fp
+1335 D 4 2 30 2         st r2 @2 fp
+1336 D 4 3 30 3         st r3 @3 fp
+1337 D 10 30 30 4       add fp fp #4
+1338 D 4 27 30 0        st rads @0 fp
+1339 L 5 1 240          mov r1 #int0
+1340 L 3 1 1000         st r1 1000
+1341 L 7 27 4           jal rads init_memory_zones
+1342 L 7 27 363         jal rads init_editor
+1343 L 5 29 8000        mov sp #8000
+1344 L 5 30 8200        mov fp #8200
+1345 L 5 1 0            mov r1 #0
+1346 X 31 29 1 0 21     push sp r1
+1347 L 7 27 53          jal rads newp
+1348 L 3 28 1203        st r28 p0
+1349 L 5 1 526          mov r1 #task0
+1350 L 5 2 0            mov r2 #0
+1351 L 1 3 1203         ld r3 p0
+1352 X 31 1 3 2 18      st r1 +r3 r2
+1353 L 1 1 1203         ld r1 p0
+1354 X 31 29 1 0 21     push sp r1
+1355 L 7 27 97          jal rads enqueue
+1356 L 5 1 1            mov r1 #1
+1357 X 31 29 1 0 21     push sp r1
+1358 L 7 27 53          jal rads newp
+1359 L 3 28 1204        st r28 p1
+1360 L 5 1 631          mov r1 #task1
+1361 L 5 2 0            mov r2 #0
+1362 L 1 3 1204         ld r3 p1
+1363 X 31 1 3 2 18      st r1 +r3 r2
+1364 L 1 1 1204         ld r1 p1
+1365 X 31 29 1 0 21     push sp r1
+1366 L 7 27 97          jal rads enqueue
+1367 L 5 1 2            mov r1 #2
+1368 X 31 29 1 0 21     push sp r1
+1369 L 7 27 53          jal rads newp
+1370 L 3 28 1205        st r28 p2
+1371 L 5 1 1236         mov r1 #task2
+1372 L 5 2 0            mov r2 #0
+1373 L 1 3 1205         ld r3 p2
+1374 X 31 1 3 2 18      st r1 +r3 r2
+1375 L 1 1 1205         ld r1 p2
+1376 X 31 29 1 0 21     push sp r1
+1377 L 7 27 97          jal rads enqueue
+1378 L 5 1 3            mov r1 #3
+1379 X 31 29 1 0 21     push sp r1
+1380 L 7 27 53          jal rads newp
+1381 L 3 28 1206        st r28 p3
+1382 L 5 1 1265         mov r1 #task3
+1383 L 5 2 0            mov r2 #0
+1384 L 1 3 1206         ld r3 p3
+1385 X 31 1 3 2 18      st r1 +r3 r2
+1386 L 1 1 1206         ld r1 p3
+1387 X 31 29 1 0 21     push sp r1
+1388 L 7 27 97          jal rads enqueue
+1389 L 5 1 4            mov r1 #4
+1390 X 31 29 1 0 21     push sp r1
+1391 L 7 27 53          jal rads newp
+1392 L 3 28 1207        st r28 p4
+1393 L 5 1 1287         mov r1 #task4
+1394 L 5 2 0            mov r2 #0
+1395 L 1 3 1207         ld r3 p4
+1396 X 31 1 3 2 18      st r1 +r3 r2
+1397 L 1 1 1207         ld r1 p4
+1398 X 31 29 1 0 21     push sp r1
+1399 L 7 27 97          jal rads enqueue
+1400 L 1 1 1105         ld r1 pcb_pool_ptr
+1401 L 3 1 1208         st r1 boot_p
+1402 L 1 1 1105         ld r1 pcb_pool_ptr
+1403 D 10 2 1 8         add r2 r1 #8
+1404 L 3 2 1105         st r2 pcb_pool_ptr
+1405 L 5 1 99           mov r1 #99
+1406 L 5 2 4            mov r2 #4
+1407 L 1 3 1208         ld r3 boot_p
+1408 X 31 1 3 2 18      st r1 +r3 r2
+1409 L 1 1 1102         ld r1 ready_head
+1410 L 5 2 7            mov r2 #7
+1411 L 1 3 1208         ld r3 boot_p
+1412 X 31 1 3 2 18      st r1 +r3 r2
+1413 L 1 1 1208         ld r1 boot_p
+1414 L 3 1 1100         st r1 currentp
+1415 L 5 1 80           mov r1 #80
+1416 X 31 1 13 0 20     trap r1 #13
+1417 L 5 1 0            mov r1 #0
+1418 X 31 1 16 0 20     trap r1 #16
+1419 X 31 0 0 0 24      int #0
+                        :L166
+1420 D 2 27 30 0        ld rads @0 fp
+1421 D 11 30 30 4       sub fp fp #4
+1422 D 2 3 30 3         ld r3 @3 fp
+1423 D 2 2 30 2         ld r2 @2 fp
+1424 D 2 1 30 1         ld r1 @1 fp
+1425 X 31 27 0 0 19     ret rads
+                        .data 200
+                        .end

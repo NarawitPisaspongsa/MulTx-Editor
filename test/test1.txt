@@ -1,0 +1,6 @@
+// test assembly
+
+main()
+  s = "abcd"
+  prints(s)
+

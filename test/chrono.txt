@@ -1,0 +1,40 @@
+// chronograph
+
+// using int0 for update time and display
+//       int1 for start/stop
+// RZ 3.6    21 Jan 2018
+
+// global
+
+gc, tc    //  global clock, timer clock
+timer     //  timer flag start-stop
+
+// int0 binds to update
+#noframe
+int0()
+  gc = gc + 1
+  if(timer) 
+    tc = tc + 1
+  print(gc)
+  print(tc)
+
+// int1 toggle start/stop
+#noframe
+int1()
+  if(timer) 
+    timer = 0
+  else
+    timer = 1
+
+main()
+  settimer0(100)    // assume 1/100, timer0 at 1 sec.
+  settimer1(400)    // timer1 at 4 sec.
+  gc = 0
+  tc = 0
+  timer = 0         // stop
+  ei(1)		    // enable int1, (int0 is enable by default)
+  while(1)
+    doze()
+
+
+  

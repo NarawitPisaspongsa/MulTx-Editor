@@ -1,0 +1,9 @@
+int0()
+  x = readport(12)
+  y = x - ((x / 256) * 256)  // modulo 256
+  print(y)
+
+main()
+  settimer0(50)            // set timer0 to 200 
+  while(1)
+     doze()    

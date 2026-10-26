@@ -1,0 +1,18 @@
+
+// interrupt rz
+
+cnt
+
+int0()
+  cnt = cnt + 1
+  print(cnt)
+  t = readport(13)
+  
+  print(t)
+
+main()
+  settimer0(200)
+  asm("; hello")
+  while(1)
+    doze()
+

@@ -1,0 +1,26 @@
+// empty, full, mutex   --  semaphores
+// shareVar
+shareVar = 0
+empty = initsem()
+full = initsem()
+mutex = initsem()
+
+writer()
+  i = 0
+  while( i < 3 )
+    wait(empty)
+    wait(mutex)
+    shareVar = shareVar + 1
+    signal(mutex)
+    signal(full)
+    i = i + 1
+
+reader()
+  i = 0
+  while( i < 3 )
+    wait(full)
+    wait(mutex)
+    print("+",shareVar)
+    signal(mutex)
+    signal(empty)
+    i = i + 1

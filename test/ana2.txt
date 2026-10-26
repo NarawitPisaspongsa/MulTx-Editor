@@ -1,0 +1,36 @@
+
+// analog input (2) using master clock time
+
+// global
+lastx, ecount
+cnt1, cnt2, t1
+
+checktime(t)    // forward declaration
+
+#noframe
+int0()
+  x = readport(11)
+//  print(x)
+  if( x != lastx )
+      if ( x == 5 ) ecount = ecount + 1
+  lastx = x
+//  print(ecount)
+  t = readport(13)   // master clock port
+//  print(t)
+  if( t >  (t1 + 4000))
+    checktime(t)
+
+checktime(t)
+  cnt2 = ecount
+  print(cnt2 - cnt1)
+  cnt1 = cnt2
+  t1 = t
+
+main()
+  settimer0(200)
+  lastx = readport(11)
+  ecount = 0
+  t1 = 0
+  cnt1 = 0
+  while(1)
+    doze()

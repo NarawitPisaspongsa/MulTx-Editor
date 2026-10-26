@@ -1,0 +1,36 @@
+
+.symbol
+  cnt 100
+  sp 27 
+  stop 0
+
+.code 0
+:main
+   mov r1 #isr1
+   st r1 1000    ; set int vec
+   mov sp #2000  ; stack
+   mov r1 #0
+   st r1 cnt     ; cnt = 0
+:loop
+;   this is almost empty loop
+   swi     
+   ld r1 cnt
+   eq r2 r1 #10
+   jf r2 loop
+   trap r0 #stop
+ 
+;  the counting routine is split into two
+:isr1
+   ld r3 cnt
+   add r3 r3 #1
+   pushm sp
+   mov r3 #isr2
+   st r3 1000     ; change interrupt vector
+   reti
+:isr2
+   popm sp
+   st r3 cnt
+   mov r3 #isr1
+   st r3 1000     ; change int vec
+   reti
+.end

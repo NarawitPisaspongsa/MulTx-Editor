@@ -1,0 +1,138 @@
+How the assembler work
+
+syntax of the assembly language
+
+Meta commands  (.symbol .code .data .end)
+
+There are three sections which can occur in any sequence: define symbols, code section, data section.  Each section starts with a meta command: .symbol for symbol section, .code for code section, .data for data section.  Each section ends with any meta command. End the assembly file by .end, it must be the last line.
+
+The ';;' starts the comment to the end of the current line.  Comments are not interpreted by the assembler.
+
+In symbol definition section, symbols are defined with their associated values.  The data section defined constant values.  Lables can be defined in code section and they can be referred to by other assembly instructions. 
+
+;; comment
+.symbol		;; define symbol
+name value
+. . .
+.code ads	;; code segment start at ads
+[:label] op opr1 opr2 ...
+. . .	
+.data ads 	;; data segment start at ads
+v v ... 	;; v is number or sym
+.end		;; end of program
+
+.symbol .code .data  can occur in any sequence.  .end is the last line of program.
+
+S2 Assembly language
+
+op opr1 opr2 ...
+where
+opr -> v #v @v +v 
+v -> n | sym
+
+The convention for operand ordering is: op dest source.  The operands are written in such a way to simplify the assembler using prefix to identify the addressing mode.
+
+ld r1, 10(r2)  is written as  ld r1 @10 r2
+ld r1, (r2+r3)   "            ld r1 +r2 r3
+add r1, r2, r3   "            add r1 r2 r3
+add r1, r2, #20               add r1 r2 #20
+
+The assembler does not check for all possible illegal combination of opcode, addressing mode and operands.  The forms of assembly language for each S2 instruction are:
+
+ld rd source
+st rd source
+aop rd rs1 rs2
+aop rd rs #n
+sop rd rs
+mv rd #n 
+jmp ads
+jt rs ads
+jal rd ads
+ret  rs
+trap num
+
+where 
+rd is r1..r31 
+rs is r0..r31
+source -> absolute | indirect | index		(addressing mode)
+aop -> add | sub | mul | div | and | or | xor |   (ALU op)
+       eq | ne | lt | le | gt | ge
+sop -> shl | shr | mv | not | push | pop	(shift move not stackop)
+ads -> label | number
+
+s2 instruction format  (field:length)
+
+L-format  op:5 r1:5 ads:22
+D-format  op:5 r1:5 r2:5 disp:17
+X-format  op:5 r1:5 r2:5 r3:5 xop:12
+
+The object code:
+
+L op num num 
+D op num num num 
+X op num num num xop
+
+ads and disp will be sign extended to 32-bit.
+
+The assembler works in two passes:  
+  pass1
+    input scanning, collect symbols, generate token list
+  pass2
+    generate object code from the token list
+
+input scanning
+
+symbol table
+
+The predefined symbols are: opcode, r0..r31.  opcode are ld st jmp jal jt jf ret mv add sub mul div and or xor eq ne lt le gt ge shl shr trap push pop not
+
+pass 1
+  collect symbols and resolve reference
+  build symbol table
+  store token list
+
+token list is an array of token.  Each token stores type, mode, reference and line number (refer to source code line number).  line number is used in reporting error and listing.  Type is: sym num op dot.  Mode is addressing mode: absolute, indirect, index, immediate, reg-reg, reg-imm, special. 
+
+For example ld r1 @d base  will generate the list of four tokens:
+( notation : {type,mode,ref} )
+{ {op,indirect,ld}, {sym,reg,r1}, {sym,disp,d}, {sym,reg,base} }
+
+pass 2
+  generate code from token list
+
+output format is suitable for a loader of the simulator
+
+a num              set address
+{L,D,X} num+       instruction
+w num              defined word
+e                  end of file
+
+Extended instructions
+
+To enable creation of new instructions, three extended instructions aer provided: xl, xd, xx, associated with three instruction formats: L, D, X.  The assembly language can not have the notation of addressing as usual because the meaning of instruction will be defined by users.  Therefore the operands of the instruction have to be written out without any decoration:
+
+xl  op r1 disp:22
+xd  op r1 r2 disp:17
+xx  op r1 r2 r3
+
+where op are user defined, disp can be a symbol.  
+
+Example  To add a new instruction "inc r1 r2 value" using D-format, where inc is assigned the opcode number 14, it can be written:
+
+.symbol 
+inc 23
+value 1
+.code 0
+xd inc r1 r2 value
+.end
+
+The generated object code will be:
+
+D 23 1 2 1
+
+The simulator must be extended accordingly to interpret this new instruction.  See more example on assembly form of extended instruction in the file "testx.txt".
+
+16 Jan 2007
+
+last update 29 Jan 2016
+

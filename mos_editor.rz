@@ -1,0 +1,364 @@
+// ============================================================================
+// mos_editor.rz — Multithreaded Online Document Editor Simulator in Rz
+// Target: S2.1 Processor (rz36 -> as21 -> sim21)
+// ============================================================================
+
+// --- Global OS Scheduler State ---
+currentp, nump, ready_head, ready_tail, free_node_ptr
+pcb_pool_ptr, tick_count
+
+// --- Dedicated Stack & Frame Base Tables for 5 Concurrent Threads ---
+stack_bases[5], frame_bases[5], task_pids[5]
+
+// --- Online Document Editor Shared State ---
+cell0[16], cell1[16]
+edit_buf[32]
+cell_sem[2], cell_owner[2], cell_rev[2], cell_wait_cnt[2]
+audit_snapshots[8], snapshot_count
+
+// --- Worker thread PCBs ---
+p0, p1, p2, p3, p4, boot_p
+
+// ============================================================================
+// MOS Kernel Queue & PCB Management
+// ============================================================================
+
+init_memory_zones()
+  stack_bases[0] = 3000
+  frame_bases[0] = 3400
+  stack_bases[1] = 4000
+  frame_bases[1] = 4400
+  stack_bases[2] = 5000
+  frame_bases[2] = 5400
+  stack_bases[3] = 6000
+  frame_bases[3] = 6400
+  stack_bases[4] = 7000
+  frame_bases[4] = 7400
+  pcb_pool_ptr = 2100
+  nump = 0
+  ready_head = 0
+  ready_tail = 0
+  tick_count = 0
+
+newp(tid)
+  p = pcb_pool_ptr
+  pcb_pool_ptr = pcb_pool_ptr + 8
+  p[0] = 0
+  p[1] = stack_bases[tid]
+  p[2] = frame_bases[tid]
+  p[3] = 1
+  p[4] = tid
+  p[5] = 0 - 1
+  p[6] = 0
+  p[7] = 0
+  return p
+
+enqueue(p)
+  p[3] = 1
+  p[5] = 0 - 1
+  if( ready_head == 0 )
+    ready_head = p
+    ready_tail = p
+    p[7] = p
+  else
+    ready_tail[7] = p
+    p[7] = ready_head
+    ready_tail = p
+  nump = nump + 1
+
+remove_from_ready(target_p)
+  if( nump <= 1 )
+    ready_head = 0
+    ready_tail = 0
+    nump = 0
+    return 0
+  prev = ready_head
+  curr = ready_head[7]
+  i = 0
+  while( i < nump )
+    if( curr == target_p )
+      prev[7] = curr[7]
+      if( target_p == ready_head )
+        ready_head = curr[7]
+      if( target_p == ready_tail )
+        ready_tail = prev
+      nump = nump - 1
+      return prev
+    prev = curr
+    curr = curr[7]
+    i = i + 1
+  return currentp
+
+nextp()
+  if( nump == 0 )
+    return 0
+  next_pcb = currentp[7]
+  if( next_pcb == 0 )
+    next_pcb = ready_head
+  currentp = next_pcb
+  currentp[6] = currentp[6] + 1
+  return currentp
+
+// ============================================================================
+// Preemptive Task Switcher ISR
+// ============================================================================
+
+#noframe
+int0()
+  asm("trap r0 #15")
+  asm("pushm sp")
+  asm("ld r1 currentp")
+  asm("st r31 @0 r1")
+  asm("st sp @1 r1")
+  asm("st fp @2 r1")
+  tick_count = tick_count + 1
+  p = nextp()
+  if( p == 0 )
+    asm("trap r0 #0")
+  asm("ld r1 currentp")
+  asm("ld r31 @0 r1")
+  asm("ld sp @1 r1")
+  asm("ld fp @2 r1")
+  asm("popm sp")
+  asm("reti")
+
+// ============================================================================
+// Blocking Semaphore API
+// ============================================================================
+
+sem_wait(sem_id)
+  di(0)
+  blocked = wait( (sem_id * 65536) + currentp )
+  if( blocked == 1 )
+    me = currentp
+    me[3] = 2
+    me[5] = sem_id
+    cell_wait_cnt[sem_id] = cell_wait_cnt[sem_id] + 1
+    prev_ready = remove_from_ready(me)
+    me[7] = ready_head
+    ei(0)
+    asm("int #0")
+  else
+    ei(0)
+
+sem_signal(sem_id)
+  di(0)
+  woken_pcb = signal(sem_id)
+  if( woken_pcb != 0 )
+    cell_wait_cnt[sem_id] = cell_wait_cnt[sem_id] - 1
+    enqueue(woken_pcb)
+  ei(0)
+
+terminate_task()
+  di(0)
+  me = currentp
+  me[3] = 0
+  remove_from_ready(me)
+  me[7] = ready_head
+  ei(0)
+  asm("int #0")
+
+// ============================================================================
+// Document Editor
+// ============================================================================
+
+init_editor()
+  cell_sem[0] = 0
+  cell_sem[1] = 1
+  seminit(0 * 256 + 1)
+  seminit(1 * 256 + 1)
+  cell_owner[0] = 0 - 1
+  cell_owner[1] = 0 - 1
+  cell_rev[0] = 0
+  cell_rev[1] = 0
+  cell_wait_cnt[0] = 0
+  cell_wait_cnt[1] = 0
+  snapshot_count = 0
+  i = 0
+  while( i < 16 )
+    cell0[i] = 46
+    cell1[i] = 46
+    i = i + 1
+
+stage_text_word_by_word(offset, c0, c1, c2, c3, c4, c5, c6, c7)
+  edit_buf[offset + 0] = c0
+  edit_buf[offset + 1] = c1
+  edit_buf[offset + 2] = c2
+  edit_buf[offset + 3] = c3
+  edit_buf[offset + 4] = c4
+  edit_buf[offset + 5] = c5
+  edit_buf[offset + 6] = c6
+  edit_buf[offset + 7] = c7
+
+write_document_cell(cell_id, tid, buf_offset)
+  sem_handle = cell_sem[cell_id]
+  sem_wait(sem_handle)
+  cell_owner[cell_id] = tid
+  i = 0
+  while( i < 16 )
+    ch = edit_buf[buf_offset + i]
+    if( cell_id == 0 )
+      cell0[i] = ch
+    else
+      cell1[i] = ch
+    k = 0
+    while( k < 4 )
+      k = k + 1
+    i = i + 1
+  cell_rev[cell_id] = cell_rev[cell_id] + 1
+  cell_owner[cell_id] = 0 - 1
+  sem_signal(sem_handle)
+
+// ============================================================================
+// Worker Threads
+// ============================================================================
+
+task0()
+  round = 0
+  while( round < 3 )
+    stage_text_word_by_word(0, 87, 82, 73, 84, 69, 82, 95, 48)
+    stage_text_word_by_word(8, 95, 67, 69, 76, 76, 95, 48, 33)
+    write_document_cell(0, 0, 0)
+    stage_text_word_by_word(0, 84, 48, 95, 67, 79, 76, 76, 65)
+    stage_text_word_by_word(8, 66, 95, 69, 68, 73, 84, 95, 49)
+    write_document_cell(1, 0, 0)
+    round = round + 1
+  terminate_task()
+
+task1()
+  round = 0
+  while( round < 3 )
+    stage_text_word_by_word(16, 87, 82, 73, 84, 69, 82, 95, 49)
+    stage_text_word_by_word(24, 95, 83, 72, 65, 82, 69, 68, 33)
+    write_document_cell(0, 1, 16)
+    stage_text_word_by_word(16, 84, 49, 95, 85, 80, 68, 65, 84)
+    stage_text_word_by_word(24, 69, 68, 95, 67, 69, 76, 76, 49)
+    write_document_cell(1, 1, 16)
+    round = round + 1
+  terminate_task()
+
+print_cell_contents(cell_id)
+  printc(91)
+  i = 0
+  while( i < 16 )
+    if( cell_id == 0 )
+      printc(cell0[i])
+    else
+      printc(cell1[i])
+    i = i + 1
+  printc(93)
+
+// --- task2 helpers (split to keep each function's buffered body under 5000 bytes) ---
+
+task2_header()
+  ansicmd(0)
+  ansicmd(2)
+  print("=== S21/MOS MULTITHREADED ONLINE DOCUMENT EDITOR ===")
+  ansicmd(6)
+  ansicmd(5)
+  print("Scheduler Ticks: ")
+  print(tick_count)
+  print(" | Active Threads: ")
+  print(nump)
+  print(" | Snapshots: ")
+  print(snapshot_count)
+  ansicmd(6)
+
+task2_cell_status(cell_id)
+  owner = cell_owner[cell_id]
+  sem   = cell_sem[cell_id]
+  wcnt  = cell_wait_cnt[cell_id]
+  rev   = cell_rev[cell_id]
+  if( owner == (0 - 1) )
+    ansicmd(3)
+    if( cell_id == 0 )
+      print("CELL 0 [UNLOCKED] ")
+    else
+      print("CELL 1 [UNLOCKED] ")
+  else
+    ansicmd(4)
+    if( cell_id == 0 )
+      print("CELL 0 [LOCKED BY T")
+    else
+      print("CELL 1 [LOCKED BY T")
+    print(owner)
+    print("] ")
+  print("SemHdl:")
+  print(sem)
+  print(" WaitQ:")
+  print(wcnt)
+  print(" Rev:")
+  print(rev)
+  print(" ")
+  print_cell_contents(cell_id)
+  ansicmd(6)
+
+task2()
+  refresh = 0
+  while( refresh < 8 )
+    di(0)
+    task2_header()
+    task2_cell_status(0)
+    task2_cell_status(1)
+    ansicmd(1)
+    ei(0)
+    doze()
+    refresh = refresh + 1
+  terminate_task()
+
+task3()
+  round = 0
+  while( round < 2 )
+    write_document_cell(1, 3, 0)
+    round = round + 1
+  terminate_task()
+
+task4()
+  snap = 0
+  while( snap < 3 )
+    sem_wait(cell_sem[0])
+    buf_ptr = malloc(16)
+    if( buf_ptr != 0 )
+      i = 0
+      while( i < 16 )
+        buf_ptr[i] = cell0[i]
+        i = i + 1
+      audit_snapshots[snapshot_count] = buf_ptr
+      snapshot_count = snapshot_count + 1
+    sem_signal(cell_sem[0])
+    doze()
+    snap = snap + 1
+  terminate_task()
+
+// ============================================================================
+// Kernel Bootstrap
+// ============================================================================
+
+main()
+  init_memory_zones()
+  init_editor()
+  asm("mov sp #8000")
+  asm("mov fp #8200")
+  p0 = newp(0)
+  p0[0] = &task0
+  enqueue(p0)
+  p1 = newp(1)
+  p1[0] = &task1
+  enqueue(p1)
+  p2 = newp(2)
+  p2[0] = &task2
+  enqueue(p2)
+  p3 = newp(3)
+  p3[0] = &task3
+  enqueue(p3)
+  p4 = newp(4)
+  p4[0] = &task4
+  enqueue(p4)
+  boot_p = pcb_pool_ptr
+  pcb_pool_ptr = pcb_pool_ptr + 8
+  boot_p[4] = 99
+  boot_p[7] = ready_head
+  currentp = boot_p
+  settimer0(80)
+  ei(0)
+  asm("int #0")

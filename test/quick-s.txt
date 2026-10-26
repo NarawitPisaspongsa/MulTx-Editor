@@ -1,0 +1,251 @@
+.symbol
+ fp 30
+ sp 29
+ retval 28
+ rads 27
+ N 1100
+ a 1101
+.code 0
+ mov fp #3500
+ mov sp #3000
+ jal rads main
+ trap r0 #0
+; fun inita pv 0 fs 1
+:inita
+; gnAsg :(#1 0 )
+; gnAsg :((vec a #1 )#1 )
+; gnBop :(< #1 N )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r1 #0
+jmp L102
+:L103
+; vec LHS
+st r1 @a r1
+add r1 r1 #1
+:L102
+ld r3 N
+lt r2 r1 r3
+jt r2 L103
+:L101
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun show pv 0 fs 1
+:show
+; gnAsg :(#1 0 )
+; gnBop :(< #1 N )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+add fp fp #4
+st rads @0 fp
+mov r1 #0
+jmp L105
+:L106
+; vec RHS
+ld r2 @a r1
+trap r2 #1
+mov r2 #32
+trap r2 #2
+add r1 r1 #1
+:L105
+ld r3 N
+lt r2 r1 r3
+jt r2 L106
+mov r2 #92
+trap r2 #2
+mov r2 #110
+trap r2 #2
+:L104
+ld rads @0 fp
+sub fp fp #4
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun swap pv 2 fs 3
+:swap
+; gnAsg :(#3 (vec a #1 ))
+; gnAsg :((vec a #1 )(vec a #2 ))
+; gnAsg :((vec a #2 )#3 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r2
+pop sp r1
+; vec RHS
+ld r4 @a r1
+mov r3 r4
+; vec RHS
+ld r4 @a r2
+; vec LHS
+st r4 @a r1
+; vec LHS
+st r3 @a r2
+:L107
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun partition pv 2 fs 6
+:partition
+; gnAsg :(#3 (vec a #1 ))
+; gnAsg :(#4 (- #1 1 ))
+; gnBop :(- #1 1 )
+; gnAsg :(#5 (+ #2 1 ))
+; gnBop :(+ #2 1 )
+; gnAsg :(#6 1 )
+; gnBop :(> (vec a #5 )#3 )
+; gnBop :(< (vec a #4 )#3 )
+; gnBop :(< #4 #5 )
+; gnAsg :(#6 0 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+st r5 @5 fp
+st r6 @6 fp
+st r7 @7 fp
+st r8 @8 fp
+add fp fp #9
+st rads @0 fp
+pop sp r2
+pop sp r1
+; vec RHS
+ld r7 @a r1
+mov r3 r7
+sub r7 r1 #1
+mov r4 r7
+add r7 r2 #1
+mov r5 r7
+mov r6 #1
+jmp L109
+:L110
+add r5 r5 #-1
+jmp L111
+:L112
+add r5 r5 #-1
+:L111
+; vec RHS
+ld r7 @a r5
+gt r8 r7 r3
+jt r8 L112
+add r4 r4 #1
+jmp L113
+:L114
+add r4 r4 #1
+:L113
+; vec RHS
+ld r7 @a r4
+lt r8 r7 r3
+jt r8 L114
+lt r7 r4 r5
+jf r7 L115
+push sp r4
+push sp r5
+jal rads swap
+jmp L116
+:L115
+mov r6 #0
+:L116
+:L109
+jt r6 L110
+mov retval r5
+jmp L108
+:L108
+ld rads @0 fp
+sub fp fp #9
+ld r8 @8 fp
+ld r7 @7 fp
+ld r6 @6 fp
+ld r5 @5 fp
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun quicksort pv 2 fs 3
+:quicksort
+; gnBop :(< #1 #2 )
+; gnAsg :(#3 (call partition #1 #2 ))
+; gnBop :(+ #3 1 )
+st r1 @1 fp
+st r2 @2 fp
+st r3 @3 fp
+st r4 @4 fp
+add fp fp #5
+st rads @0 fp
+pop sp r2
+pop sp r1
+lt r4 r1 r2
+jf r4 L118
+push sp r1
+push sp r2
+jal rads partition
+mov r3 r28
+push sp r1
+push sp r3
+jal rads quicksort
+add r4 r3 #1
+push sp r4
+push sp r2
+jal rads quicksort
+:L118
+:L117
+ld rads @0 fp
+sub fp fp #5
+ld r4 @4 fp
+ld r3 @3 fp
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+; fun main pv 0 fs 0
+:main
+; gnAsg :(N 10 )
+; gnBop :(- N 1 )
+st r1 @1 fp
+st r2 @2 fp
+add fp fp #3
+st rads @0 fp
+mov r1 #10
+st r1 N
+jal rads inita
+mov r1 #0
+push sp r1
+mov r1 #5
+push sp r1
+jal rads swap
+mov r1 #2
+push sp r1
+mov r1 #8
+push sp r1
+jal rads swap
+jal rads show
+mov r1 #0
+push sp r1
+ld r1 N
+sub r2 r1 #1
+push sp r2
+jal rads quicksort
+jal rads show
+:L119
+ld rads @0 fp
+sub fp fp #3
+ld r2 @2 fp
+ld r1 @1 fp
+ret rads
+.data 200
+.end

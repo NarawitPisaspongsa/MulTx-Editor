@@ -1,0 +1,11 @@
+
+// port
+
+main()
+  i = 0
+  while( i < 300 )
+     x = readport(10)
+     print(x," ")
+     i = i + 1
+
+

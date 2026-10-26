@@ -1,0 +1,25 @@
+
+//  pass pointer to variable or function, global
+
+ax[10], gg
+
+inc(x)
+//  return *x + 1
+  x[0] = x[0] + 1
+
+sq(x)
+  return x * x
+
+main()
+  gg = 11
+  print(&gg)
+  print(&ax)
+  b = sq(2)
+  print(b)
+  print(&sq)
+  print(gg)
+  inc(&gg)
+  print(gg)
+
+
+
